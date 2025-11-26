@@ -145,13 +145,6 @@
       white-space: nowrap;
     }
     
-    .day-diamonds {
-      font-size: 16px;
-      color: var(--text-muted);
-      margin-top: 4px;
-      letter-spacing: 0.05em;
-    }
-    
     .cycle-section {
       flex: 1;
       display: flex;
@@ -171,13 +164,218 @@
       color: var(--text-muted);
     }
 
-    /* Inventory Grid */
+    /* Inventory Grid - Category System */
     .inventory-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 10px;
     }
 
+    .inv-category {
+      background: var(--bg-panel-soft);
+      border: 1px solid var(--border-soft);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .inv-category:hover {
+      background: rgba(255, 123, 0, 0.1);
+      border-color: var(--accent-fire);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 123, 0, 0.2);
+    }
+
+    .inv-category-icon {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    .inv-category-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    /* Dropdown System */
+    .inv-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(180deg, #1a2332 0%, #0f1621 100%);
+      border: 2px solid var(--accent-fire);
+      border-radius: 12px;
+      padding: 10px;
+      min-width: 140px;
+      z-index: 50;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+      margin-top: 0px;
+      padding-top: 18px;
+    }
+
+    /* Invisible bridge area to keep dropdown open when moving mouse */
+    .inv-dropdown::before {
+      content: '';
+      position: absolute;
+      top: -20px;
+      left: 0;
+      right: 0;
+      height: 25px;
+      background: transparent;
+    }
+    
+    /* Arrow pointer */
+    .inv-dropdown::after {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-bottom: 8px solid var(--accent-fire);
+    }
+
+    .inv-category:hover .inv-dropdown {
+      display: block;
+    }
+
+    .inv-dropdown-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      margin-bottom: 4px;
+    }
+
+    .inv-dropdown-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .inv-dropdown-item:hover {
+      background: rgba(255, 123, 0, 0.2);
+    }
+
+    .inv-dropdown-item.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .inv-dropdown-item.disabled:hover {
+      background: transparent;
+    }
+
+    .inv-dropdown-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .inv-dropdown-icon {
+      font-size: 18px;
+    }
+
+    .inv-dropdown-name {
+      font-size: 12px;
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    .inv-dropdown-count {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent-fire-soft);
+    }
+    
+    /* Rewards dropdown specific styles */
+    .inv-dropdown-section {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent-fire);
+      padding: 8px 12px 4px 12px;
+      border-bottom: 1px solid var(--border-soft);
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+    
+    .inv-dropdown-section:not(:first-child) {
+      margin-top: 8px;
+    }
+    
+    .reward-item.unearned {
+      opacity: 0.4;
+    }
+    
+    .reward-item.earned {
+      background: rgba(124, 217, 146, 0.1);
+    }
+    
+    .reward-item.earned .inv-dropdown-name::after {
+      content: ' ✓';
+      color: var(--accent-ok);
+    }
+    
+    #rewardsDropdown {
+      min-width: 200px;
+      max-height: 400px;
+      overflow-y: auto;
+      /* Align to right edge instead of center to prevent cutoff */
+      left: auto;
+      right: 0;
+      transform: none;
+    }
+    
+    #rewardsDropdown::after {
+      /* Move arrow to right side */
+      left: auto;
+      right: 20px;
+      transform: none;
+    }
+    
+    .chest-keys {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    
+    /* Diamond flying animation */
+    .flying-diamond {
+      position: fixed;
+      font-size: 48px;
+      z-index: 10000;
+      pointer-events: none;
+      filter: drop-shadow(0 0 10px rgba(100, 200, 255, 0.8));
+    }
+    
+    @keyframes diamondPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+    
+    .diamond-burst {
+      position: fixed;
+      font-size: 64px;
+      z-index: 10000;
+      pointer-events: none;
+      animation: diamondBurst 0.5s ease-out forwards;
+    }
+    
+    @keyframes diamondBurst {
+      0% { transform: scale(0.5); opacity: 0; }
+      50% { transform: scale(1.5); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Legacy classes for compatibility */
     .inv-item {
       background: var(--bg-panel-soft);
       border: 1px solid var(--border-soft);
@@ -530,6 +728,210 @@
       transform: scale(1.1);
       box-shadow: 0 15px 50px rgba(255, 123, 0, 0.8);
     }
+    
+    /* Crafting Menu */
+    .crafting-menu {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(135deg, #1a2332 0%, #0f1621 100%);
+      border: 3px solid var(--accent-fire);
+      border-radius: 20px;
+      padding: 25px 30px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+      z-index: 100;
+      min-width: 380px;
+      max-height: 80vh;
+      flex-direction: column;
+      display: none;
+    }
+
+    .crafting-menu.active {
+      display: flex;
+    }
+
+    .crafting-menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      border-bottom: 2px solid var(--border-soft);
+      padding-bottom: 15px;
+    }
+
+    .crafting-menu-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--accent-fire-soft);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    
+    .crafting-close-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--bg-panel);
+      border: 2px solid var(--accent-fire);
+      color: var(--accent-fire);
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+    
+    .crafting-close-btn:hover {
+      background: var(--accent-fire);
+      color: white;
+      transform: scale(1.1);
+    }
+    
+    .crafting-inventory-display {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 12px;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+    }
+    
+    .crafting-inv-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .crafting-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .crafting-items {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+      max-height: 50vh;
+      padding-right: 5px;
+    }
+
+    .crafting-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: var(--bg-panel-soft);
+      border: 2px solid var(--border-soft);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .crafting-item:hover:not(.disabled) {
+      background: rgba(255, 123, 0, 0.15);
+      border-color: var(--accent-fire);
+      transform: translateX(4px);
+    }
+
+    .crafting-item.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .crafting-item.upgrade {
+      background: linear-gradient(135deg, rgba(255, 123, 0, 0.2) 0%, rgba(255, 94, 0, 0.1) 100%);
+      border-color: var(--accent-fire);
+    }
+
+    .crafting-item-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .crafting-item-icon {
+      font-size: 28px;
+      width: 40px;
+      text-align: center;
+    }
+
+    .crafting-item-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .crafting-item-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+
+    .crafting-item-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .crafting-item-cost {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .crafting-cost-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 14px;
+      color: var(--text-main);
+    }
+
+    .crafting-cost-item.insufficient {
+      color: var(--accent-bad);
+    }
+
+    .crafting-cost-icon {
+      font-size: 16px;
+    }
+    
+    /* Hidden elements by default */
+    .hidden-until-crafted {
+      display: none !important;
+    }
+    
+    /* Crafting Tooltip */
+    .crafting-tooltip {
+      position: fixed;
+      bottom: 120px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.85);
+      color: var(--accent-fire-soft);
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      border: 2px solid var(--accent-fire);
+      z-index: 50;
+      pointer-events: none;
+      animation: tooltipPulse 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes tooltipPulse {
+      0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
+      50% { opacity: 0.8; transform: translateX(-50%) scale(1.02); }
+    }
   </style>
 </head>
 <body>
@@ -546,9 +948,8 @@
       <div class="info-section day-time-row">
         <div class="day-section">
           <div class="day-counter">Day <span id="dayCounter">1</span></div>
-          <div class="day-diamonds" id="dayDiamonds">0 💎</div>
         </div>
-        <div class="cycle-section">
+        <div class="cycle-section" id="cycleSection" style="visibility: hidden;">
           <div class="cycle-icon" id="cycleIcon">☀️</div>
           <div class="cycle-countdown" id="cycleCountdown">3:00</div>
         </div>
@@ -559,26 +960,199 @@
       <div class="info-section">
         <div class="info-section-title">Inventory</div>
         <div class="inventory-grid">
-          <div class="inv-item" id="woodItem" style="cursor: pointer;" title="Click to add to fire">
-            <div class="inv-icon">🪵</div>
-            <div class="inv-label">Wood</div>
-            <div class="inv-count" id="woodCount">0</div>
+          <!-- FOOD Category -->
+          <div class="inv-category" id="foodCategory">
+            <div class="inv-category-icon">🍖</div>
+            <div class="inv-category-label">Food</div>
+            <div class="inv-dropdown" id="foodDropdown">
+              <div class="inv-dropdown-item" id="carrotItem" data-item="carrots">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">🥕</span>
+                  <span class="inv-dropdown-name">Carrots</span>
+                </div>
+                <span class="inv-dropdown-count" id="carrotCount">0</span>
+              </div>
+              <div class="inv-dropdown-item" id="meatItem" data-item="meat">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">🥩</span>
+                  <span class="inv-dropdown-name">Meat</span>
+                </div>
+                <span class="inv-dropdown-count" id="meatCount">0</span>
+              </div>
+              <div class="inv-dropdown-item" id="stewItem" data-item="stew">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">🍲</span>
+                  <span class="inv-dropdown-name">Stew</span>
+                </div>
+                <span class="inv-dropdown-count" id="stewCount">0</span>
+              </div>
+            </div>
           </div>
-          <div class="inv-item" id="meatItem" style="cursor: pointer;" title="Click to eat">
-            <div class="inv-icon">🥩</div>
-            <div class="inv-label">Meat</div>
-            <div class="inv-count" id="meatCount">0</div>
+          
+          <!-- SUPPLIES Category (Wood, Metal, Fuel) -->
+          <div class="inv-category" id="suppliesCategory">
+            <div class="inv-category-icon">🪵</div>
+            <div class="inv-category-label">Supplies</div>
+            <div class="inv-dropdown" id="suppliesDropdown">
+              <div class="inv-dropdown-item" id="woodItem" data-item="wood">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">🪵</span>
+                  <span class="inv-dropdown-name">Wood</span>
+                </div>
+                <span class="inv-dropdown-count" id="woodCount">0</span>
+              </div>
+              <div class="inv-dropdown-item" id="metalItem" data-item="metal">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">🔧</span>
+                  <span class="inv-dropdown-name">Metal</span>
+                </div>
+                <span class="inv-dropdown-count" id="scrapCount">0</span>
+              </div>
+              <div class="inv-dropdown-item" id="fuelItem" data-item="fuel">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">⛽</span>
+                  <span class="inv-dropdown-name">Fuel</span>
+                </div>
+                <span class="inv-dropdown-count" id="coalCount">30</span>
+              </div>
+            </div>
           </div>
-          <div class="inv-item" id="fuelItem" style="cursor: pointer;" title="Click to add to fire">
-            <div class="inv-icon">⛽</div>
-            <div class="inv-label">Fuel</div>
-            <div class="inv-count" id="coalCount">0</div>
+          
+          <!-- WEAPONS Category -->
+          <div class="inv-category" id="weaponsCategory">
+            <div class="inv-category-icon">⚔️</div>
+            <div class="inv-category-label">Weapons</div>
+            <div class="inv-dropdown" id="weaponsDropdown">
+              <div class="inv-dropdown-item" id="axeItem" data-item="axe">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">🪓</span>
+                  <span class="inv-dropdown-name" id="axeName">Old Axe</span>
+                </div>
+              </div>
+              <div class="inv-dropdown-item" id="spearItem" data-item="spear" style="display: none;">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">🔱</span>
+                  <span class="inv-dropdown-name">Spear</span>
+                </div>
+                <span class="inv-dropdown-desc" style="font-size: 10px; color: #888;">2-shot wolves</span>
+              </div>
+            </div>
           </div>
-          <div class="inv-item">
-            <div class="inv-icon">🔧</div>
-            <div class="inv-label">Metal</div>
-            <div class="inv-count" id="scrapCount">0</div>
+          
+          <!-- REWARDS Category -->
+          <div class="inv-category" id="rewardsCategory">
+            <div class="inv-category-icon">💎</div>
+            <div class="inv-category-label">Rewards <span id="rewardsDiamondCount">0</span></div>
+            <div class="inv-dropdown" id="rewardsDropdown">
+              <!-- Rare Items Section -->
+              <div class="inv-dropdown-section">Rare Items</div>
+              <div class="inv-dropdown-item reward-item" id="lanternbarkReward" data-reward="lanternbark">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">🌳</span>
+                  <span class="inv-dropdown-name">Lanternbark Tree</span>
+                </div>
+                <span class="inv-dropdown-count">+1💎</span>
+              </div>
+              <div class="inv-dropdown-item reward-item" id="silverWolfReward" data-reward="silverWolf">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">🐺</span>
+                  <span class="inv-dropdown-name">Silver-Gleam Wolf</span>
+                </div>
+                <span class="inv-dropdown-count">+1💎</span>
+              </div>
+              <div class="inv-dropdown-item reward-item" id="whisperingFanReward" data-reward="whisperingFan">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">🌀</span>
+                  <span class="inv-dropdown-name">Whispering Fan Blade</span>
+                </div>
+                <span class="inv-dropdown-count">+1💎</span>
+              </div>
+              <div class="inv-dropdown-item reward-item" id="frostCanisterReward" data-reward="frostCanister">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">🧊</span>
+                  <span class="inv-dropdown-name">Frost-Locked Canister</span>
+                </div>
+                <span class="inv-dropdown-count">+1💎</span>
+              </div>
+              
+              <!-- Chests Section -->
+              <div class="inv-dropdown-section">Chests</div>
+              <div class="inv-dropdown-item reward-item" id="woodenChestReward" data-reward="woodenChest">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">📦</span>
+                  <span class="inv-dropdown-name">Wooden Chest</span>
+                </div>
+                <span class="inv-dropdown-count chest-keys" id="woodenChestKeys">🔑×0/3</span>
+              </div>
+              <div class="inv-dropdown-item reward-item" id="goldenChestReward" data-reward="goldenChest">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">📦</span>
+                  <span class="inv-dropdown-name">Golden Chest</span>
+                </div>
+                <span class="inv-dropdown-count chest-keys" id="goldenChestKeys">🔑×0/4</span>
+              </div>
+              <div class="inv-dropdown-item reward-item" id="rubyChestReward" data-reward="rubyChest">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">📦</span>
+                  <span class="inv-dropdown-name">Ruby Chest</span>
+                </div>
+                <span class="inv-dropdown-count chest-keys" id="rubyChestKeys">🔑×0/5</span>
+              </div>
+              <div class="inv-dropdown-item reward-item" id="diamondChestReward" data-reward="diamondChest">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">📦</span>
+                  <span class="inv-dropdown-name">Diamond Chest</span>
+                </div>
+                <span class="inv-dropdown-count chest-keys" id="diamondChestKeys">🔑×0/6</span>
+              </div>
+              <div class="inv-dropdown-item reward-item" id="obsidianChestReward" data-reward="obsidianChest">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">📦</span>
+                  <span class="inv-dropdown-name">Obsidian Chest</span>
+                </div>
+                <span class="inv-dropdown-count chest-keys" id="obsidianChestKeys">🔑×0/7</span>
+              </div>
+              
+              <!-- Milestones Section -->
+              <div class="inv-dropdown-section">Milestones</div>
+              <div class="inv-dropdown-item reward-item" id="day10Reward" data-reward="day10">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">🏁</span>
+                  <span class="inv-dropdown-name">Reach Day 10</span>
+                </div>
+                <span class="inv-dropdown-count">+1💎</span>
+              </div>
+              <div class="inv-dropdown-item reward-item" id="day20Reward" data-reward="day20">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">🏁</span>
+                  <span class="inv-dropdown-name">Reach Day 20</span>
+                </div>
+                <span class="inv-dropdown-count">+2💎</span>
+              </div>
+              <div class="inv-dropdown-item reward-item" id="day40Reward" data-reward="day40">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">🏁</span>
+                  <span class="inv-dropdown-name">Reach Day 40</span>
+                </div>
+                <span class="inv-dropdown-count">+3💎</span>
+              </div>
+              <div class="inv-dropdown-item reward-item" id="day60Reward" data-reward="day60">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">🏁</span>
+                  <span class="inv-dropdown-name">Reach Day 60</span>
+                </div>
+                <span class="inv-dropdown-count">+4💎</span>
+              </div>
+              <div class="inv-dropdown-item reward-item" id="day99Reward" data-reward="day99">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">🏆</span>
+                  <span class="inv-dropdown-name">Reach Day 99</span>
+                </div>
+                <span class="inv-dropdown-count">+5💎</span>
+              </div>
+            </div>
           </div>
+          
         </div>
       </div>
 
@@ -615,7 +1189,7 @@
       </div>
 
       <!-- Minimap -->
-      <div class="info-section">
+      <div class="info-section" id="minimapSection" style="display: none;">
         <div class="info-section-title">Map</div>
         <div class="minimap-container">
           <canvas id="minimapCanvas" width="150" height="150"></canvas>
@@ -634,7 +1208,7 @@
     <div class="math-question" id="mathQuestion">2 + 3 = ?</div>
     <div class="math-input-row">
       <div class="math-input">
-        <input type="text" id="mathAnswerInput" placeholder="?" autofocus />
+        <input type="text" inputmode="numeric" pattern="[0-9]*" id="mathAnswerInput" placeholder="?" autofocus />
       </div>
       <button class="math-submit" id="mathSubmitButton">Submit</button>
     </div>
@@ -644,6 +1218,22 @@
   <!-- Pause Overlay -->
   <div class="pause-overlay" id="pauseOverlay">
     <div class="play-button" id="playButton" title="Resume Game">▶️</div>
+  </div>
+
+  <!-- Crafting Menu -->
+  <div class="crafting-menu" id="craftingMenu">
+    <div class="crafting-menu-header">
+      <div class="crafting-menu-title">⚒️ Crafting</div>
+      <button class="crafting-close-btn" id="craftingCloseBtn">✕</button>
+    </div>
+    <div class="crafting-inventory-display">
+      <div class="crafting-inv-item"><span>🪵</span><span id="craftingWoodCount">0</span></div>
+      <div class="crafting-inv-item"><span>🔧</span><span id="craftingMetalCount">0</span></div>
+    </div>
+    <div class="crafting-hint">Click an item to craft</div>
+    <div class="crafting-items" id="craftingItems">
+      <!-- Items will be populated by JavaScript -->
+    </div>
   </div>
 
   <!-- Three.js -->
@@ -920,6 +1510,190 @@
       
       group.position.set(x, 0, z);
       group.userData = { type: 'fan', action: 'salvageFan', worldX: x, worldZ: z };
+      return group;
+    }
+    
+    function createKey(x, z, tier) {
+      const group = new THREE.Group();
+      
+      // Key colors by tier
+      const keyColors = {
+        wooden: { main: 0xDEB887, dark: 0x8B4513, glow: 0xFFD700 },  // Burlywood/brown
+        golden: { main: 0xFFD700, dark: 0xDAA520, glow: 0xFFD700 },
+        ruby: { main: 0xFF3366, dark: 0xCC0033, glow: 0xFF6699 },
+        diamond: { main: 0x66FFFF, dark: 0x00CCCC, glow: 0x00FFFF },
+        obsidian: { main: 0x9966FF, dark: 0x6633CC, glow: 0xCC99FF }
+      };
+      
+      const colors = keyColors[tier] || keyColors.wooden;
+      const keyMaterial = new THREE.MeshBasicMaterial({ color: colors.main });
+      const darkMaterial = new THREE.MeshBasicMaterial({ color: colors.dark });
+      
+      // Simple key design - circular handle
+      const handleGeometry = new THREE.TorusGeometry(0.4, 0.12, 8, 16);
+      const handle = new THREE.Mesh(handleGeometry, keyMaterial);
+      handle.rotation.x = Math.PI / 2;
+      handle.position.set(-0.6, 0.2, 0);
+      group.add(handle);
+      
+      // Key shaft
+      const shaftGeometry = new THREE.BoxGeometry(1.2, 0.2, 0.15);
+      const shaft = new THREE.Mesh(shaftGeometry, keyMaterial);
+      shaft.position.set(0.4, 0.2, 0);
+      group.add(shaft);
+      
+      // Key teeth (3 simple teeth)
+      const teethPositions = [0.7, 0.9, 1.0];
+      teethPositions.forEach((tx, i) => {
+        const toothHeight = 0.2 + (i * 0.1);
+        const tooth = new THREE.Mesh(
+          new THREE.BoxGeometry(0.1, 0.15, toothHeight),
+          darkMaterial
+        );
+        tooth.position.set(tx, 0.2, toothHeight / 2);
+        group.add(tooth);
+      });
+      
+      group.position.set(x, 0, z);
+      group.userData = { type: 'key', action: 'collectKey', tier: tier, worldX: x, worldZ: z };
+      return group;
+    }
+    
+    function createChest(x, z, tier) {
+      const group = new THREE.Group();
+      
+      // Chest colors by tier
+      const chestColors = {
+        wooden: { main: 0x8B4513, trim: 0x5D3A1A, lock: 0xB8860B, emissive: 0x000000 },
+        golden: { main: 0xFFD700, trim: 0xB8860B, lock: 0xFFFFFF, emissive: 0x332200 },
+        ruby: { main: 0xE0115F, trim: 0x8B0A3A, lock: 0xFFD700, emissive: 0x220011 },
+        diamond: { main: 0x00BFFF, trim: 0x0080AA, lock: 0xFFFFFF, emissive: 0x112233 },
+        obsidian: { main: 0x1a1a2e, trim: 0x4B0082, lock: 0x9400D3, emissive: 0x110022 }
+      };
+      
+      const colors = chestColors[tier] || chestColors.wooden;
+      const mainMaterial = new THREE.MeshLambertMaterial({ 
+        color: colors.main,
+        emissive: colors.emissive
+      });
+      const trimMaterial = new THREE.MeshLambertMaterial({ color: colors.trim });
+      const lockMaterial = new THREE.MeshLambertMaterial({ 
+        color: colors.lock,
+        emissive: tier !== 'wooden' ? 0x222222 : 0x000000
+      });
+      
+      // Chest base (bottom half)
+      const baseGeometry = new THREE.BoxGeometry(2.5, 1.2, 1.8);
+      const base = new THREE.Mesh(baseGeometry, mainMaterial);
+      base.position.set(0, 0.6, 0);
+      base.castShadow = true;
+      base.receiveShadow = true;
+      group.add(base);
+      
+      // Chest lid (top half, slightly arched)
+      const lidGeometry = new THREE.BoxGeometry(2.5, 0.8, 1.8);
+      const lid = new THREE.Mesh(lidGeometry, mainMaterial);
+      lid.position.set(0, 1.6, 0);
+      lid.castShadow = true;
+      lid.receiveShadow = true;
+      group.add(lid);
+      
+      // Arched top of lid
+      const archGeometry = new THREE.BoxGeometry(2.5, 0.3, 1.4);
+      const arch = new THREE.Mesh(archGeometry, mainMaterial);
+      arch.position.set(0, 2.1, 0);
+      arch.castShadow = true;
+      group.add(arch);
+      
+      // Trim bands (horizontal straps)
+      const bandPositions = [0.3, 0.9, 1.3, 1.8];
+      bandPositions.forEach(y => {
+        const band = new THREE.Mesh(
+          new THREE.BoxGeometry(2.6, 0.15, 1.9),
+          trimMaterial
+        );
+        band.position.set(0, y, 0);
+        band.castShadow = true;
+        group.add(band);
+      });
+      
+      // Corner trims (vertical)
+      const corners = [
+        { x: -1.2, z: -0.85 },
+        { x: -1.2, z: 0.85 },
+        { x: 1.2, z: -0.85 },
+        { x: 1.2, z: 0.85 }
+      ];
+      corners.forEach(pos => {
+        const cornerTrim = new THREE.Mesh(
+          new THREE.BoxGeometry(0.2, 2.2, 0.2),
+          trimMaterial
+        );
+        cornerTrim.position.set(pos.x, 1.1, pos.z);
+        cornerTrim.castShadow = true;
+        group.add(cornerTrim);
+      });
+      
+      // Lock plate (front)
+      const lockPlate = new THREE.Mesh(
+        new THREE.BoxGeometry(0.6, 0.8, 0.1),
+        lockMaterial
+      );
+      lockPlate.position.set(0, 1.2, 0.95);
+      lockPlate.castShadow = true;
+      group.add(lockPlate);
+      
+      // Keyhole
+      const keyhole = new THREE.Mesh(
+        new THREE.BoxGeometry(0.15, 0.3, 0.12),
+        new THREE.MeshLambertMaterial({ color: 0x111111 })
+      );
+      keyhole.position.set(0, 1.15, 0.97);
+      group.add(keyhole);
+      
+      // Glowing base for visibility
+      const glowGeometry = new THREE.BoxGeometry(3.5, 0.05, 2.8);
+      const glowMaterial = new THREE.MeshBasicMaterial({ 
+        color: colors.main, 
+        transparent: true, 
+        opacity: 0.5 
+      });
+      const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+      glow.position.y = 0.02;
+      group.add(glow);
+      
+      // Beacon light for spotting from afar
+      const beaconGeometry = new THREE.BoxGeometry(0.4, 4, 0.4);
+      const beaconMaterial = new THREE.MeshBasicMaterial({ 
+        color: colors.main, 
+        transparent: true, 
+        opacity: 0.4 
+      });
+      const beacon = new THREE.Mesh(beaconGeometry, beaconMaterial);
+      beacon.position.set(0, 3, 0);
+      group.add(beacon);
+      
+      // Sparkle particles around the chest (for special tiers)
+      if (tier !== 'wooden') {
+        for (let i = 0; i < 6; i++) {
+          const angle = (i / 6) * Math.PI * 2;
+          const sparkle = new THREE.Mesh(
+            new THREE.BoxGeometry(0.15, 0.15, 0.15),
+            new THREE.MeshBasicMaterial({ color: colors.lock })
+          );
+          sparkle.position.set(
+            Math.cos(angle) * 1.8,
+            1.5 + Math.sin(i) * 0.5,
+            Math.sin(angle) * 1.3
+          );
+          sparkle.userData.sparkleAngle = angle;
+          sparkle.userData.sparkleOffset = i;
+          group.add(sparkle);
+        }
+      }
+      
+      group.position.set(x, 0, z);
+      group.userData = { type: 'chest', action: 'openChest', tier: tier, worldX: x, worldZ: z };
       return group;
     }
     
@@ -1244,6 +2018,559 @@
       return group;
     }
     
+    function createCraftingBench(x, z) {
+      const group = new THREE.Group();
+      
+      // Wooden table base (purple-ish wood)
+      const tableTopGeometry = new THREE.BoxGeometry(2, 0.3, 1.5);
+      const tableTopMaterial = new THREE.MeshLambertMaterial({ color: 0x8B7355 }); // Brown wood
+      const tableTop = new THREE.Mesh(tableTopGeometry, tableTopMaterial);
+      tableTop.position.y = 1.2;
+      tableTop.castShadow = true;
+      tableTop.receiveShadow = true;
+      group.add(tableTop);
+      
+      // Legs (4)
+      const legGeometry = new THREE.BoxGeometry(0.2, 1.2, 0.2);
+      const legMaterial = new THREE.MeshLambertMaterial({ color: 0x6B5D3F });
+      const legPositions = [
+        [0.8, 0.6, 0.6],
+        [0.8, 0.6, -0.6],
+        [-0.8, 0.6, 0.6],
+        [-0.8, 0.6, -0.6]
+      ];
+      
+      legPositions.forEach(pos => {
+        const leg = new THREE.Mesh(legGeometry, legMaterial);
+        leg.position.set(pos[0], pos[1], pos[2]);
+        leg.castShadow = true;
+        leg.receiveShadow = true;
+        group.add(leg);
+      });
+      
+      // Tools on table - hammer
+      const hammerHandleGeometry = new THREE.BoxGeometry(0.1, 0.6, 0.1);
+      const hammerHandleMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
+      const hammerHandle = new THREE.Mesh(hammerHandleGeometry, hammerHandleMaterial);
+      hammerHandle.position.set(-0.4, 1.5, 0.2);
+      hammerHandle.rotation.z = Math.PI / 4;
+      hammerHandle.castShadow = true;
+      group.add(hammerHandle);
+      
+      const hammerHeadGeometry = new THREE.BoxGeometry(0.3, 0.2, 0.2);
+      const hammerHeadMaterial = new THREE.MeshLambertMaterial({ color: 0x505050 });
+      const hammerHead = new THREE.Mesh(hammerHeadGeometry, hammerHeadMaterial);
+      hammerHead.position.set(-0.6, 1.7, 0.2);
+      hammerHead.rotation.z = Math.PI / 4;
+      hammerHead.castShadow = true;
+      group.add(hammerHead);
+      
+      // Saw on table
+      const sawHandleGeometry = new THREE.BoxGeometry(0.15, 0.15, 0.3);
+      const sawHandle = new THREE.Mesh(sawHandleGeometry, hammerHandleMaterial);
+      sawHandle.position.set(0.5, 1.45, -0.3);
+      sawHandle.castShadow = true;
+      group.add(sawHandle);
+      
+      const sawBladeGeometry = new THREE.BoxGeometry(0.6, 0.05, 0.3);
+      const sawBlade = new THREE.Mesh(sawBladeGeometry, hammerHeadMaterial);
+      sawBlade.position.set(0.1, 1.45, -0.3);
+      sawBlade.castShadow = true;
+      group.add(sawBlade);
+      
+      // Purple accent panel (to match layout color)
+      const accentGeometry = new THREE.BoxGeometry(1.8, 0.1, 0.1);
+      const accentMaterial = new THREE.MeshLambertMaterial({ color: 0x9B59B6 }); // Purple
+      const accent = new THREE.Mesh(accentGeometry, accentMaterial);
+      accent.position.set(0, 1.0, 0.75);
+      accent.castShadow = true;
+      group.add(accent);
+      
+      group.position.set(x, 0, z);
+      group.userData = { type: 'craftingBench' };
+      return group;
+    }
+    
+    function createBed(x, z, colorScheme) {
+      const group = new THREE.Group();
+      
+      // Color schemes: 'cyan', 'brown', 'green'
+      let frameColor, mattressColor;
+      if (colorScheme === 'cyan') {
+        frameColor = 0x5DADE2; // Cyan
+        mattressColor = 0x85C1E9; // Light blue
+      } else if (colorScheme === 'brown') {
+        frameColor = 0x8B4513; // Brown
+        mattressColor = 0xD2691E; // Chocolate
+      } else if (colorScheme === 'green') {
+        frameColor = 0x27AE60; // Green
+        mattressColor = 0x52BE80; // Light green
+      }
+      
+      // Bed frame
+      const frameGeometry = new THREE.BoxGeometry(2, 0.2, 3);
+      const frameMaterial = new THREE.MeshLambertMaterial({ color: frameColor });
+      const frame = new THREE.Mesh(frameGeometry, frameMaterial);
+      frame.position.y = 0.5;
+      frame.castShadow = true;
+      frame.receiveShadow = true;
+      group.add(frame);
+      
+      // Mattress
+      const mattressGeometry = new THREE.BoxGeometry(1.8, 0.3, 2.8);
+      const mattressMaterial = new THREE.MeshLambertMaterial({ color: mattressColor });
+      const mattress = new THREE.Mesh(mattressGeometry, mattressMaterial);
+      mattress.position.y = 0.75;
+      mattress.castShadow = true;
+      mattress.receiveShadow = true;
+      group.add(mattress);
+      
+      // Pillow
+      const pillowGeometry = new THREE.BoxGeometry(0.8, 0.2, 0.6);
+      const pillowMaterial = new THREE.MeshLambertMaterial({ color: 0xECF0F1 }); // White
+      const pillow = new THREE.Mesh(pillowGeometry, pillowMaterial);
+      pillow.position.set(0, 1.0, -1.0);
+      pillow.castShadow = true;
+      group.add(pillow);
+      
+      // Legs (4)
+      const legGeometry = new THREE.BoxGeometry(0.2, 0.5, 0.2);
+      const legMaterial = new THREE.MeshLambertMaterial({ color: 0x34495E });
+      const legPositions = [
+        [0.9, 0.25, 1.4],
+        [0.9, 0.25, -1.4],
+        [-0.9, 0.25, 1.4],
+        [-0.9, 0.25, -1.4]
+      ];
+      
+      legPositions.forEach(pos => {
+        const leg = new THREE.Mesh(legGeometry, legMaterial);
+        leg.position.set(pos[0], pos[1], pos[2]);
+        leg.castShadow = true;
+        group.add(leg);
+      });
+      
+      group.position.set(x, 0, z);
+      group.userData = { type: 'bed' };
+      return group;
+    }
+    
+    function createFarmPlot(x, z) {
+      const group = new THREE.Group();
+      
+      // Soil plot (brown/dark brown)
+      const soilGeometry = new THREE.BoxGeometry(2, 0.2, 3);
+      const soilMaterial = new THREE.MeshLambertMaterial({ color: 0x6B4423 }); // Dark brown soil
+      const soil = new THREE.Mesh(soilGeometry, soilMaterial);
+      soil.position.y = 0.1;
+      soil.castShadow = true;
+      soil.receiveShadow = true;
+      group.add(soil);
+      
+      // Carrots group (separate so we can show/hide)
+      const carrotsGroup = new THREE.Group();
+      carrotsGroup.name = 'carrots';
+      
+      // Carrots (6 in 2 columns, 3 rows)
+      const carrotPositions = [
+        [-0.4, 0.2, -0.8],
+        [0.4, 0.2, -0.8],
+        [-0.4, 0.2, 0],
+        [0.4, 0.2, 0],
+        [-0.4, 0.2, 0.8],
+        [0.4, 0.2, 0.8]
+      ];
+      
+      carrotPositions.forEach(pos => {
+        // Orange carrot body
+        const carrotGeometry = new THREE.BoxGeometry(0.15, 0.3, 0.15);
+        const carrotMaterial = new THREE.MeshLambertMaterial({ color: 0xFF8C00 }); // Orange
+        const carrot = new THREE.Mesh(carrotGeometry, carrotMaterial);
+        carrot.position.set(pos[0], pos[1], pos[2]);
+        carrot.castShadow = true;
+        carrotsGroup.add(carrot);
+        
+        // Green leafy top
+        const leavesGeometry = new THREE.BoxGeometry(0.2, 0.15, 0.2);
+        const leavesMaterial = new THREE.MeshLambertMaterial({ color: 0x228B22 }); // Green
+        const leaves = new THREE.Mesh(leavesGeometry, leavesMaterial);
+        leaves.position.set(pos[0], pos[1] + 0.22, pos[2]);
+        leaves.castShadow = true;
+        carrotsGroup.add(leaves);
+      });
+      
+      // Hide carrots initially (will show when ready to harvest)
+      carrotsGroup.visible = false;
+      group.add(carrotsGroup);
+      
+      group.position.set(x, 0, z);
+      group.userData = { type: 'farmPlot', carrotsGroup: carrotsGroup };
+      return group;
+    }
+    
+    function createCrockPot(x, z) {
+      const group = new THREE.Group();
+      
+      const potMaterial = new THREE.MeshLambertMaterial({ color: 0x9B8B7A }); // Warm gray-brown
+      const darkPotMaterial = new THREE.MeshLambertMaterial({ color: 0x7A6B5A }); // Darker accent
+      const legMaterial = new THREE.MeshLambertMaterial({ color: 0x4A4A4A }); // Dark gray metal
+      
+      // Tapered pot body - multiple layers getting narrower toward bottom
+      const numSegments = 16;
+      const layers = [
+        { y: 1.6, radius: 1.0, height: 0.25 },   // Top rim
+        { y: 1.35, radius: 0.95, height: 0.25 }, // Upper body
+        { y: 1.1, radius: 0.85, height: 0.25 },  // Upper-mid body
+        { y: 0.85, radius: 0.75, height: 0.25 }, // Mid body
+        { y: 0.6, radius: 0.6, height: 0.25 },   // Lower-mid body
+        { y: 0.4, radius: 0.45, height: 0.2 },   // Lower body (tapered)
+      ];
+      
+      layers.forEach((layer, layerIndex) => {
+        const material = layerIndex === 0 ? darkPotMaterial : potMaterial;
+        for (let i = 0; i < numSegments; i++) {
+          const angle = (i / numSegments) * Math.PI * 2;
+          const segmentWidth = (layer.radius * 2 * Math.PI) / numSegments * 0.7;
+          const segmentGeometry = new THREE.BoxGeometry(segmentWidth, layer.height, 0.2);
+          const segment = new THREE.Mesh(segmentGeometry, material);
+          segment.position.set(
+            Math.cos(angle) * layer.radius,
+            layer.y,
+            Math.sin(angle) * layer.radius
+          );
+          segment.rotation.y = angle;
+          segment.castShadow = true;
+          segment.receiveShadow = true;
+          group.add(segment);
+        }
+      });
+      
+      // Closed bottom of pot
+      const bottomGeometry = new THREE.BoxGeometry(0.9, 0.15, 0.9);
+      const bottom = new THREE.Mesh(bottomGeometry, potMaterial);
+      bottom.position.y = 0.3;
+      bottom.castShadow = true;
+      bottom.receiveShadow = true;
+      group.add(bottom);
+      
+      // Three curved legs
+      const legAngles = [0, (2 * Math.PI) / 3, (4 * Math.PI) / 3];
+      
+      legAngles.forEach(angle => {
+        // Leg - slightly curved outward
+        const legGroup = new THREE.Group();
+        
+        // Upper leg part (angled outward)
+        const upperLegGeometry = new THREE.BoxGeometry(0.12, 0.35, 0.12);
+        const upperLeg = new THREE.Mesh(upperLegGeometry, legMaterial);
+        upperLeg.position.set(0.08, 0.15, 0);
+        upperLeg.rotation.z = -0.2;
+        upperLeg.castShadow = true;
+        legGroup.add(upperLeg);
+        
+        // Lower leg part (more vertical)
+        const lowerLegGeometry = new THREE.BoxGeometry(0.1, 0.2, 0.1);
+        const lowerLeg = new THREE.Mesh(lowerLegGeometry, legMaterial);
+        lowerLeg.position.set(0.12, -0.05, 0);
+        lowerLeg.castShadow = true;
+        legGroup.add(lowerLeg);
+        
+        // Foot (small flat piece)
+        const footGeometry = new THREE.BoxGeometry(0.15, 0.05, 0.15);
+        const foot = new THREE.Mesh(footGeometry, legMaterial);
+        foot.position.set(0.12, -0.15, 0);
+        foot.castShadow = true;
+        foot.receiveShadow = true;
+        legGroup.add(foot);
+        
+        legGroup.position.set(
+          Math.cos(angle) * 0.35,
+          0.2,
+          Math.sin(angle) * 0.35
+        );
+        legGroup.rotation.y = angle;
+        group.add(legGroup);
+      });
+      
+      // Handles (2) - loop style
+      const handleMaterial = new THREE.MeshLambertMaterial({ color: 0x5A5A5A });
+      
+      [-1, 1].forEach(side => {
+        // Handle ring
+        const handleGeometry = new THREE.BoxGeometry(0.08, 0.3, 0.08);
+        const handle = new THREE.Mesh(handleGeometry, handleMaterial);
+        handle.position.set(side * 1.05, 1.2, 0);
+        handle.castShadow = true;
+        group.add(handle);
+        
+        // Handle attachment point
+        const attachGeometry = new THREE.BoxGeometry(0.12, 0.12, 0.12);
+        const attach = new THREE.Mesh(attachGeometry, darkPotMaterial);
+        attach.position.set(side * 0.95, 1.2, 0);
+        attach.castShadow = true;
+        group.add(attach);
+      });
+      
+      // Lid
+      const lidMaterial = new THREE.MeshLambertMaterial({ color: 0x8A7A6A });
+      
+      // Lid base (slightly domed - multiple layers)
+      for (let i = 0; i < numSegments; i++) {
+        const angle = (i / numSegments) * Math.PI * 2;
+        const lidGeometry = new THREE.BoxGeometry(0.3, 0.1, 0.15);
+        const lidPiece = new THREE.Mesh(lidGeometry, lidMaterial);
+        lidPiece.position.set(Math.cos(angle) * 0.5, 1.75, Math.sin(angle) * 0.5);
+        lidPiece.rotation.y = angle;
+        lidPiece.castShadow = true;
+        group.add(lidPiece);
+      }
+      
+      // Lid center
+      const lidCenterGeometry = new THREE.BoxGeometry(0.6, 0.12, 0.6);
+      const lidCenter = new THREE.Mesh(lidCenterGeometry, lidMaterial);
+      lidCenter.position.y = 1.78;
+      lidCenter.castShadow = true;
+      group.add(lidCenter);
+      
+      // Lid handle/knob
+      const knobGeometry = new THREE.BoxGeometry(0.25, 0.15, 0.25);
+      const knob = new THREE.Mesh(knobGeometry, darkPotMaterial);
+      knob.position.y = 1.9;
+      knob.castShadow = true;
+      group.add(knob);
+      
+      group.position.set(x, 0, z);
+      group.userData = { type: 'crockPot' };
+      return group;
+    }
+    
+    function createBiofuelProcessor(x, z) {
+      const group = new THREE.Group();
+      
+      // Main body (green machine)
+      const bodyGeometry = new THREE.BoxGeometry(1.5, 1.5, 1.2);
+      const bodyMaterial = new THREE.MeshLambertMaterial({ color: 0x52BE80 }); // Green
+      const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+      body.position.y = 0.75;
+      body.castShadow = true;
+      body.receiveShadow = true;
+      group.add(body);
+      
+      // Funnel on top (input)
+      const funnelGeometry = new THREE.BoxGeometry(0.8, 0.5, 0.8);
+      const funnelMaterial = new THREE.MeshLambertMaterial({ color: 0x7D7D7D }); // Gray
+      const funnel = new THREE.Mesh(funnelGeometry, funnelMaterial);
+      funnel.position.y = 1.75;
+      funnel.castShadow = true;
+      group.add(funnel);
+      
+      // Spout (output)
+      const spoutGeometry = new THREE.BoxGeometry(0.3, 0.3, 0.6);
+      const spout = new THREE.Mesh(spoutGeometry, funnelMaterial);
+      spout.position.set(0.9, 0.5, 0);
+      spout.castShadow = true;
+      group.add(spout);
+      
+      // Control panel (darker green)
+      const panelGeometry = new THREE.BoxGeometry(0.8, 0.6, 0.1);
+      const panelMaterial = new THREE.MeshLambertMaterial({ color: 0x27AE60 }); // Darker green
+      const panel = new THREE.Mesh(panelGeometry, panelMaterial);
+      panel.position.set(0, 1.0, 0.65);
+      panel.castShadow = true;
+      group.add(panel);
+      
+      // Buttons on panel (red and yellow)
+      const buttonGeometry = new THREE.BoxGeometry(0.15, 0.15, 0.05);
+      const redButtonMaterial = new THREE.MeshLambertMaterial({ color: 0xFF0000 });
+      const yellowButtonMaterial = new THREE.MeshLambertMaterial({ color: 0xFFFF00 });
+      
+      const redButton = new THREE.Mesh(buttonGeometry, redButtonMaterial);
+      redButton.position.set(-0.2, 1.0, 0.71);
+      group.add(redButton);
+      
+      const yellowButton = new THREE.Mesh(buttonGeometry, yellowButtonMaterial);
+      yellowButton.position.set(0.2, 1.0, 0.71);
+      group.add(yellowButton);
+      
+      // Base platform
+      const baseGeometry = new THREE.BoxGeometry(1.8, 0.2, 1.5);
+      const baseMaterial = new THREE.MeshLambertMaterial({ color: 0x34495E });
+      const base = new THREE.Mesh(baseGeometry, baseMaterial);
+      base.position.y = 0.1;
+      base.castShadow = true;
+      base.receiveShadow = true;
+      group.add(base);
+      
+      group.position.set(x, 0, z);
+      group.userData = { type: 'biofuelProcessor' };
+      return group;
+    }
+    
+    function createLogWallSegment(x, z, rotation) {
+      const group = new THREE.Group();
+      
+      // Wall made of vertical logs (like fence posts) - much longer for octagon
+      const logWidth = 0.4;
+      const logHeight = 2.5;
+      const logDepth = 0.4;
+      const numLogs = 25; // More logs for longer wall
+      const spacing = 0.5;
+      const totalWidth = (numLogs - 1) * spacing;
+      
+      for (let i = 0; i < numLogs; i++) {
+        const logGeometry = new THREE.BoxGeometry(logWidth, logHeight, logDepth);
+        const logMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 }); // Brown wood
+        const log = new THREE.Mesh(logGeometry, logMaterial);
+        
+        const xOffset = (i * spacing) - (totalWidth / 2);
+        log.position.set(xOffset, logHeight / 2, 0);
+        log.castShadow = true;
+        log.receiveShadow = true;
+        group.add(log);
+        
+        // Pointed top
+        const tipGeometry = new THREE.BoxGeometry(logWidth, 0.4, logDepth);
+        const tip = new THREE.Mesh(tipGeometry, logMaterial);
+        tip.position.set(xOffset, logHeight + 0.2, 0);
+        tip.rotation.z = Math.PI / 4;
+        tip.castShadow = true;
+        group.add(tip);
+      }
+      
+      // Horizontal support beams (2)
+      const beamGeometry = new THREE.BoxGeometry(totalWidth + 0.5, 0.2, 0.2);
+      const beamMaterial = new THREE.MeshLambertMaterial({ color: 0x654321 }); // Darker brown
+      
+      const beam1 = new THREE.Mesh(beamGeometry, beamMaterial);
+      beam1.position.set(0, 0.8, 0.2);
+      beam1.castShadow = true;
+      group.add(beam1);
+      
+      const beam2 = new THREE.Mesh(beamGeometry, beamMaterial);
+      beam2.position.set(0, 1.8, 0.2);
+      beam2.castShadow = true;
+      group.add(beam2);
+      
+      group.position.set(x, 0, z);
+      group.rotation.y = rotation;
+      group.userData = { type: 'logWall', length: totalWidth };
+      return group;
+    }
+    
+    function updateLogWallSegments() {
+      logWallSegments.length = 0;
+      logWallMeshes.forEach(wall => {
+        const halfLength = ((wall.userData && wall.userData.length) || 12) / 2;
+        const angle = wall.rotation.y;
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+        const startX = wall.position.x - cos * halfLength;
+        const startZ = wall.position.z - sin * halfLength;
+        const endX = wall.position.x + cos * halfLength;
+        const endZ = wall.position.z + sin * halfLength;
+        logWallSegments.push({ startX, startZ, endX, endZ });
+      });
+    }
+    
+    function createBearTrap(x, z) {
+      const group = new THREE.Group();
+      
+      // Base plate (circular-ish, made with box)
+      const baseGeometry = new THREE.BoxGeometry(1.2, 0.1, 1.2);
+      const baseMaterial = new THREE.MeshLambertMaterial({ color: 0x505050 }); // Dark gray metal
+      const base = new THREE.Mesh(baseGeometry, baseMaterial);
+      base.position.y = 0.05;
+      base.castShadow = true;
+      base.receiveShadow = true;
+      group.add(base);
+      
+      // Jaw teeth (left side - 5 teeth)
+      const toothGeometry = new THREE.BoxGeometry(0.1, 0.4, 0.1);
+      const toothMaterial = new THREE.MeshLambertMaterial({ color: 0x808080 }); // Gray
+      
+      for (let i = 0; i < 5; i++) {
+        const tooth = new THREE.Mesh(toothGeometry, toothMaterial);
+        const zOffset = (i - 2) * 0.25;
+        tooth.position.set(-0.4, 0.25, zOffset);
+        tooth.rotation.z = -Math.PI / 6; // Angled inward
+        tooth.castShadow = true;
+        group.add(tooth);
+      }
+      
+      // Jaw teeth (right side - 5 teeth)
+      for (let i = 0; i < 5; i++) {
+        const tooth = new THREE.Mesh(toothGeometry, toothMaterial);
+        const zOffset = (i - 2) * 0.25;
+        tooth.position.set(0.4, 0.25, zOffset);
+        tooth.rotation.z = Math.PI / 6; // Angled inward
+        tooth.castShadow = true;
+        group.add(tooth);
+      }
+      
+      // Jaw hinges
+      const hingeGeometry = new THREE.BoxGeometry(0.15, 0.15, 0.15);
+      const hingeMaterial = new THREE.MeshLambertMaterial({ color: 0x2C2C2C }); // Very dark
+      
+      const hinge1 = new THREE.Mesh(hingeGeometry, hingeMaterial);
+      hinge1.position.set(-0.5, 0.1, 0.5);
+      hinge1.castShadow = true;
+      group.add(hinge1);
+      
+      const hinge2 = new THREE.Mesh(hingeGeometry, hingeMaterial);
+      hinge2.position.set(0.5, 0.1, 0.5);
+      hinge2.castShadow = true;
+      group.add(hinge2);
+      
+      // Chain link
+      const chainGeometry = new THREE.BoxGeometry(0.1, 0.3, 0.1);
+      const chain = new THREE.Mesh(chainGeometry, baseMaterial);
+      chain.position.set(0, 0.2, -0.5);
+      chain.castShadow = true;
+      group.add(chain);
+      
+      group.position.set(x, 0, z);
+      group.userData = { type: 'bearTrap' };
+      return group;
+    }
+    
+    function createSapling(x, z) {
+      const group = new THREE.Group();
+      
+      // Small trunk
+      const trunkGeometry = new THREE.BoxGeometry(0.3, 0.8, 0.3);
+      const trunkMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
+      const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
+      trunk.position.y = 0.4;
+      trunk.castShadow = true;
+      trunk.receiveShadow = true;
+      group.add(trunk);
+      
+      // Small leaves (just a few blocks)
+      const leavesGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+      const leavesMaterial = new THREE.MeshLambertMaterial({ color: 0x228B22 });
+      
+      const leaves1 = new THREE.Mesh(leavesGeometry, leavesMaterial);
+      leaves1.position.y = 0.9;
+      leaves1.castShadow = true;
+      group.add(leaves1);
+      
+      const leaves2 = new THREE.Mesh(leavesGeometry, leavesMaterial);
+      leaves2.position.set(0.3, 1.1, 0);
+      leaves2.scale.set(0.7, 0.7, 0.7);
+      leaves2.castShadow = true;
+      group.add(leaves2);
+      
+      const leaves3 = new THREE.Mesh(leavesGeometry, leavesMaterial);
+      leaves3.position.set(-0.3, 1.1, 0);
+      leaves3.scale.set(0.7, 0.7, 0.7);
+      leaves3.castShadow = true;
+      group.add(leaves3);
+      
+      group.position.set(x, 0, z);
+      group.userData = { type: 'sapling' };
+      return group;
+    }
+    
     // ============================================
     // GROUND PLANE
     // ============================================
@@ -1307,9 +2634,11 @@
     const meatCount = document.getElementById('meatCount');
     const coalCount = document.getElementById('coalCount');
     const scrapCount = document.getElementById('scrapCount');
+    const carrotCount = document.getElementById('carrotCount');
+    const stewCount = document.getElementById('stewCount');
     
     const dayCounter = document.getElementById('dayCounter');
-    const dayDiamonds = document.getElementById('dayDiamonds');
+    const rewardsDiamondCount = document.getElementById('rewardsDiamondCount');
     const cycleIcon = document.getElementById('cycleIcon');
     const cycleCountdown = document.getElementById('cycleCountdown');
     const healthBar = document.getElementById('healthBar');
@@ -1324,10 +2653,24 @@
     const woodItem = document.getElementById('woodItem');
     const meatItem = document.getElementById('meatItem');
     const fuelItem = document.getElementById('fuelItem');
+    const carrotItem = document.getElementById('carrotItem');
+    const stewItem = document.getElementById('stewItem');
+    const axeItem = document.getElementById('axeItem');
+    const spearItem = document.getElementById('spearItem');
+    const metalItem = document.getElementById('metalItem');
     
     const pauseButton = document.getElementById('pauseButton');
     const pauseOverlay = document.getElementById('pauseOverlay');
     const playButton = document.getElementById('playButton');
+    
+    // Crafting menu elements
+    const craftingMenu = document.getElementById('craftingMenu');
+    const craftingItems = document.getElementById('craftingItems');
+    const craftingCloseBtn = document.getElementById('craftingCloseBtn');
+    const craftingWoodCount = document.getElementById('craftingWoodCount');
+    const craftingMetalCount = document.getElementById('craftingMetalCount');
+    const cycleSection = document.getElementById('cycleSection');
+    const minimapSection = document.getElementById('minimapSection');
     
     // Game state
     let isDialogOpen = false;
@@ -1347,13 +2690,37 @@
     let fireStrength = 0;
     let currentFireLevel = 1;
     
+    // New inventory items
+    let carrots = 0;
+    let stew = 0;
+    let hasAxe = false;
+    
+    // Crafting state variables
+    let craftingTier = 1; // 1, 2, or 3
+    let hasCraftedMap = false;
+    let hasCraftedSunDial = false;
+    let hasCraftedCrockPot = false;
+    let hasCraftedBiofuelProcessor = false;
+    let bedsOwned = 0; // 0-3
+    let farmPlotsOwned = 0; // 0-10
+    let logWallsOwned = 0; // 0-8
+    let bearTrapsOwned = 0; // 0-8
+    let farmPlotDaysUntilHarvest = 2; // Countdown timer
+    let isNearCraftingBench = false;
+    let isCraftingMenuOpen = false;
+    let pendingCraftItem = null; // Item waiting to be crafted after math problem
+    let isNearCrockPot = false;
+    let crockPotTooltipElement = null;
+    let isNearBiofuelProcessor = false;
+    let biofuelTooltipElement = null;
+    
     let isStarving = false;
     let starvationTimer = null;
     
     let isNight = false;
     let currentDay = 1;
-    const DAY_DURATION = 180; // 3 minutes in seconds
-    const NIGHT_DURATION = 90; // 1.5 minutes in seconds
+    const DAY_DURATION = 180; // 3 minutes
+    const NIGHT_DURATION = 90; // 1.5 minutes
     let cycleTimeRemaining = DAY_DURATION;
     let nightWarningShown = false;
     let cultistsSpawned = false;
@@ -1361,9 +2728,404 @@
     let cultistsDefeated = 0;
     let cultistRewardGiven = false;
     
+    // Wall building configuration
+    // Segment positions: 0=3oclock, 1=4:30, 2=6oclock(entrance), 3=7:30, 4=9oclock, 5=10:30, 6=12oclock, 7=1:30
+    // Build order: 12 o'clock first, then alternating left/right outward from there
+    const wallBuildOrder = [6, 5, 7, 4, 0, 3, 1]; // Excludes entrance (segment 2)
+    let wallsBuilt = 0; // How many walls are built (0-7). Starts at 0, player crafts them
+    let activeWallSegments = new Set(); // Track which segment indices have walls
+    
     // Diamond tracking
     let diamondsEarned = 0;
     let healthLostThisCycle = false; // Track if player lost health during current day/night cycle
+    
+    // ============================================
+    // REWARDS SYSTEM
+    // ============================================
+    
+    // Rewards state object
+    const rewardsState = {
+      // Rare items (true = found)
+      rareItems: {
+        lanternbark: false,
+        silverWolf: false,
+        whisperingFan: false,
+        frostCanister: false
+      },
+      // Which entity is the rare one (set during generation)
+      rareEntityMarkers: {
+        lanternbarkTree: null,    // Will be set to an entity reference
+        silverGleamWolf: null,
+        whisperingFanBlade: null,
+        frostLockedCanister: null
+      },
+      // Keys collected (count for each tier)
+      keys: {
+        wooden: 0,    // need 3
+        golden: 0,    // need 4
+        ruby: 0,      // need 5
+        diamond: 0,   // need 6
+        obsidian: 0   // need 7
+      },
+      keysRequired: {
+        wooden: 3,
+        golden: 4,
+        ruby: 5,
+        diamond: 6,
+        obsidian: 7
+      },
+      // Chests spawned (true = spawned in world)
+      chestSpawned: {
+        wooden: false,
+        golden: false,
+        ruby: false,
+        diamond: false,
+        obsidian: false
+      },
+      // Chests opened (true = opened and reward claimed)
+      chestsOpened: {
+        wooden: false,
+        golden: false,
+        ruby: false,
+        diamond: false,
+        obsidian: false
+      },
+      // Current key tier being collected (wooden -> golden -> ruby -> diamond -> obsidian)
+      currentKeyTier: null, // null until fire level 2
+      // Active chest in the world (spawned after collecting all keys of a tier)
+      activeChest: null,
+      // Milestones reached (true = claimed)
+      milestones: {
+        day10: false,
+        day20: false,
+        day40: false,
+        day60: false,
+        day99: false
+      },
+      // Weapon upgrades
+      weapons: {
+        hasGoodAxe: false,
+        hasSpear: false,
+        hasChainsaw: false
+      }
+    };
+    
+    // Key entities in the world
+    const keyEntities = [];
+    const chestEntities = [];
+    
+    // Chest entity in the world
+    let chestEntity = null;
+    
+    // Rare item spawn chances by fire level
+    const rareSpawnChances = {
+      lanternbark: [0.60, 0.90, 1.00, 1.00, 1.00],  // 60% L1, 90% L2, 100% L3+
+      silverWolf:  [0.20, 0.50, 0.80, 1.00, 1.00],  // 20% L1, 50% L2, 80% L3, 100% L4+
+      whisperingFan: [0.00, 0.25, 0.50, 1.00, 1.00], // 0% L1, 25% L2, 50% L3, 100% L4+
+      frostCanister: [0.00, 0.25, 0.50, 1.00, 1.00]  // 0% L1, 25% L2, 50% L3, 100% L4+
+    };
+    
+    // Check if a rare item should spawn for the current fire level
+    function shouldSpawnRareItem(rareType) {
+      const levelIndex = Math.min(currentFireLevel - 1, 4);
+      const chance = rareSpawnChances[rareType][levelIndex];
+      return Math.random() < chance;
+    }
+    
+    // Mark rare entities among existing entities of a type
+    function markRareEntities() {
+      // Only mark if not already found AND not already marked
+      if (!rewardsState.rareItems.lanternbark && !rewardsState.rareEntityMarkers.lanternbarkTree) {
+        const trees = entities.filter(e => e.type === 'tree' && !e.isRare);
+        if (trees.length > 0 && shouldSpawnRareItem('lanternbark')) {
+          const randomTree = trees[Math.floor(Math.random() * trees.length)];
+          randomTree.isRare = true;
+          randomTree.rareType = 'lanternbark';
+          rewardsState.rareEntityMarkers.lanternbarkTree = randomTree;
+          
+          // TODO: Remove debug marker after testing
+          // Add a small red dot at the base of the tree
+          if (randomTree.mesh) {
+            const markerGeometry = new THREE.SphereGeometry(0.15, 8, 8);
+            const markerMaterial = new THREE.MeshBasicMaterial({ color: 0xcc0000 }); // Red
+            const marker = new THREE.Mesh(markerGeometry, markerMaterial);
+            marker.position.set(0, 0.15, 0.6); // At the base, close to trunk
+            randomTree.mesh.add(marker);
+          }
+        }
+      }
+      
+      if (!rewardsState.rareItems.silverWolf && !rewardsState.rareEntityMarkers.silverGleamWolf) {
+        const wolves = entities.filter(e => e.type === 'wolf' && !e.isRare);
+        if (wolves.length > 0 && shouldSpawnRareItem('silverWolf')) {
+          const randomWolf = wolves[Math.floor(Math.random() * wolves.length)];
+          randomWolf.isRare = true;
+          randomWolf.rareType = 'silverWolf';
+          rewardsState.rareEntityMarkers.silverGleamWolf = randomWolf;
+        }
+      }
+      
+      if (!rewardsState.rareItems.whisperingFan && !rewardsState.rareEntityMarkers.whisperingFanBlade) {
+        const fans = entities.filter(e => e.type === 'fan' && !e.isRare);
+        if (fans.length > 0 && shouldSpawnRareItem('whisperingFan')) {
+          const randomFan = fans[Math.floor(Math.random() * fans.length)];
+          randomFan.isRare = true;
+          randomFan.rareType = 'whisperingFan';
+          rewardsState.rareEntityMarkers.whisperingFanBlade = randomFan;
+        }
+      }
+      
+      if (!rewardsState.rareItems.frostCanister && !rewardsState.rareEntityMarkers.frostLockedCanister) {
+        const canisters = entities.filter(e => e.type === 'fuel' && !e.isRare);
+        if (canisters.length > 0 && shouldSpawnRareItem('frostCanister')) {
+          const randomCanister = canisters[Math.floor(Math.random() * canisters.length)];
+          randomCanister.isRare = true;
+          randomCanister.rareType = 'frostCanister';
+          rewardsState.rareEntityMarkers.frostLockedCanister = randomCanister;
+        }
+      }
+    }
+    
+    // Calculate total diamonds from all sources
+    function calculateTotalDiamonds() {
+      let total = 0;
+      
+      // Rare items (1 diamond each)
+      if (rewardsState.rareItems.lanternbark) total += 1;
+      if (rewardsState.rareItems.silverWolf) total += 1;
+      if (rewardsState.rareItems.whisperingFan) total += 1;
+      if (rewardsState.rareItems.frostCanister) total += 1;
+      
+      // Diamond chest gives 3 diamonds
+      if (rewardsState.chestsOpened.diamond) total += 3;
+      
+      // Milestones
+      if (rewardsState.milestones.day10) total += 1;
+      if (rewardsState.milestones.day20) total += 2;
+      if (rewardsState.milestones.day40) total += 3;
+      if (rewardsState.milestones.day60) total += 4;
+      if (rewardsState.milestones.day99) total += 5;
+      
+      // Plus the night-survival diamonds (old system)
+      total += diamondsEarned;
+      
+      return total;
+    }
+    
+    // Update the rewards dropdown display
+    function updateRewardsDisplay() {
+      const totalDiamonds = calculateTotalDiamonds();
+      rewardsDiamondCount.textContent = totalDiamonds;
+      
+      // Update rare items
+      document.getElementById('lanternbarkReward').classList.toggle('earned', rewardsState.rareItems.lanternbark);
+      document.getElementById('lanternbarkReward').classList.toggle('unearned', !rewardsState.rareItems.lanternbark);
+      
+      document.getElementById('silverWolfReward').classList.toggle('earned', rewardsState.rareItems.silverWolf);
+      document.getElementById('silverWolfReward').classList.toggle('unearned', !rewardsState.rareItems.silverWolf);
+      
+      document.getElementById('whisperingFanReward').classList.toggle('earned', rewardsState.rareItems.whisperingFan);
+      document.getElementById('whisperingFanReward').classList.toggle('unearned', !rewardsState.rareItems.whisperingFan);
+      
+      document.getElementById('frostCanisterReward').classList.toggle('earned', rewardsState.rareItems.frostCanister);
+      document.getElementById('frostCanisterReward').classList.toggle('unearned', !rewardsState.rareItems.frostCanister);
+      
+      // Update chests (show key progress)
+      const chestTiers = ['wooden', 'golden', 'ruby', 'diamond', 'obsidian'];
+      chestTiers.forEach(tier => {
+        const chestEl = document.getElementById(`${tier}ChestReward`);
+        const keysEl = document.getElementById(`${tier}ChestKeys`);
+        const collected = rewardsState.keys[tier];
+        const required = rewardsState.keysRequired[tier];
+        
+        if (rewardsState.chestsOpened[tier]) {
+          chestEl.classList.add('earned');
+          chestEl.classList.remove('unearned');
+          keysEl.textContent = '✓ Opened';
+        } else {
+          chestEl.classList.remove('earned');
+          chestEl.classList.toggle('unearned', collected === 0 && rewardsState.currentKeyTier !== tier);
+          keysEl.textContent = `🔑×${collected}/${required}`;
+        }
+      });
+      
+      // Update milestones
+      document.getElementById('day10Reward').classList.toggle('earned', rewardsState.milestones.day10);
+      document.getElementById('day10Reward').classList.toggle('unearned', !rewardsState.milestones.day10);
+      
+      document.getElementById('day20Reward').classList.toggle('earned', rewardsState.milestones.day20);
+      document.getElementById('day20Reward').classList.toggle('unearned', !rewardsState.milestones.day20);
+      
+      document.getElementById('day40Reward').classList.toggle('earned', rewardsState.milestones.day40);
+      document.getElementById('day40Reward').classList.toggle('unearned', !rewardsState.milestones.day40);
+      
+      document.getElementById('day60Reward').classList.toggle('earned', rewardsState.milestones.day60);
+      document.getElementById('day60Reward').classList.toggle('unearned', !rewardsState.milestones.day60);
+      
+      document.getElementById('day99Reward').classList.toggle('earned', rewardsState.milestones.day99);
+      document.getElementById('day99Reward').classList.toggle('unearned', !rewardsState.milestones.day99);
+    }
+    
+    // Animate a diamond flying to the rewards section
+    function animateFlyingDiamond(onComplete) {
+      // Get the rewards category button position
+      const rewardsBtn = document.getElementById('rewardsCategory');
+      const rewardsRect = rewardsBtn.getBoundingClientRect();
+      const targetX = rewardsRect.left + rewardsRect.width / 2;
+      const targetY = rewardsRect.top + rewardsRect.height / 2;
+      
+      // Start position (center of screen)
+      const startX = window.innerWidth / 2;
+      const startY = window.innerHeight / 2;
+      
+      // Create a flash overlay
+      const flashOverlay = document.createElement('div');
+      flashOverlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: radial-gradient(circle, rgba(100, 200, 255, 0.5) 0%, rgba(100, 200, 255, 0) 70%);
+        z-index: 9999;
+        pointer-events: none;
+        animation: flashFade 2s ease-out forwards;
+      `;
+      document.body.appendChild(flashOverlay);
+      
+      // Create explosion of diamonds all over the screen
+      const diamondCount = 30;
+      const explosionDiamonds = [];
+      
+      for (let i = 0; i < diamondCount; i++) {
+        const diamond = document.createElement('div');
+        diamond.textContent = '💎';
+        diamond.style.cssText = `
+          position: fixed;
+          font-size: ${20 + Math.random() * 40}px;
+          z-index: 10001;
+          pointer-events: none;
+          left: ${Math.random() * window.innerWidth}px;
+          top: ${Math.random() * window.innerHeight}px;
+          opacity: 1;
+          filter: drop-shadow(0 0 10px rgba(100, 200, 255, 0.8));
+          animation: diamondExplosion 2s ease-out forwards;
+          animation-delay: ${Math.random() * 0.3}s;
+        `;
+        document.body.appendChild(diamond);
+        explosionDiamonds.push(diamond);
+      }
+      
+      // Add the explosion animation style if not exists
+      if (!document.getElementById('diamondExplosionStyle')) {
+        const style = document.createElement('style');
+        style.id = 'diamondExplosionStyle';
+        style.textContent = `
+          @keyframes diamondExplosion {
+            0% { opacity: 1; transform: scale(1) rotate(0deg); }
+            50% { opacity: 1; transform: scale(1.3) rotate(180deg); }
+            100% { opacity: 0; transform: scale(0.3) rotate(360deg); }
+          }
+          @keyframes flashFade {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+      
+      // After explosion (1 second), clean up and create the flying diamond
+      setTimeout(() => {
+        flashOverlay.remove();
+        explosionDiamonds.forEach(d => d.remove());
+        
+        // Create the main flying diamond
+        const diamond = document.createElement('div');
+        diamond.className = 'flying-diamond';
+        diamond.textContent = '💎';
+        diamond.style.left = `${startX - 24}px`;
+        diamond.style.top = `${startY - 24}px`;
+        document.body.appendChild(diamond);
+        
+        // Animate to target
+        const duration = 800;
+        const startTime = performance.now();
+        
+        function animate(currentTime) {
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          
+          // Easing function (ease-out cubic)
+          const eased = 1 - Math.pow(1 - progress, 3);
+          
+          const currentX = startX + (targetX - startX) * eased;
+          const currentY = startY + (targetY - startY) * eased;
+          
+          // Add a slight arc
+          const arc = Math.sin(progress * Math.PI) * -50;
+          
+          diamond.style.left = `${currentX - 24}px`;
+          diamond.style.top = `${currentY - 24 + arc}px`;
+          diamond.style.transform = `scale(${1 - progress * 0.5})`;
+          
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          } else {
+            diamond.remove();
+            // Flash the rewards button
+            rewardsBtn.style.transition = 'transform 0.1s, box-shadow 0.1s';
+            rewardsBtn.style.transform = 'scale(1.1)';
+            rewardsBtn.style.boxShadow = '0 0 20px rgba(100, 200, 255, 0.8)';
+            setTimeout(() => {
+              rewardsBtn.style.transform = '';
+              rewardsBtn.style.boxShadow = '';
+              if (onComplete) onComplete();
+            }, 200);
+          }
+        }
+        
+        requestAnimationFrame(animate);
+      }, 2000);
+    }
+    
+    // Award a diamond and show notification with animation
+    function awardRareItemDiamond(itemName) {
+      // First show the diamond animation
+      animateFlyingDiamond(() => {
+        // Then show the notification and update display
+        showCraftNotification(`🎉 You found the ${itemName}! +1💎`);
+        updateRewardsDisplay();
+      });
+    }
+    
+    // Check and award milestones at the start of a new day
+    function checkMilestones(day) {
+      if (day >= 10 && !rewardsState.milestones.day10) {
+        rewardsState.milestones.day10 = true;
+        showCraftNotification('🏁 Day 10 reached! +1💎');
+        updateRewardsDisplay();
+      }
+      if (day >= 20 && !rewardsState.milestones.day20) {
+        rewardsState.milestones.day20 = true;
+        showCraftNotification('🏁 Day 20 reached! +2💎');
+        updateRewardsDisplay();
+      }
+      if (day >= 40 && !rewardsState.milestones.day40) {
+        rewardsState.milestones.day40 = true;
+        showCraftNotification('🏁 Day 40 reached! +3💎');
+        updateRewardsDisplay();
+      }
+      if (day >= 60 && !rewardsState.milestones.day60) {
+        rewardsState.milestones.day60 = true;
+        showCraftNotification('🏁 Day 60 reached! +4💎');
+        updateRewardsDisplay();
+      }
+      if (day >= 99 && !rewardsState.milestones.day99) {
+        rewardsState.milestones.day99 = true;
+        showCraftNotification('🏆 Day 99 reached! +5💎');
+        updateRewardsDisplay();
+      }
+    }
     
     const FIRE_DECAY_RATES = {
       1: 100 / 600,  // 10 minutes (50% slower)
@@ -1377,7 +3139,7 @@
     let playerX = 0; // World coordinates
     let playerZ = 0;
     const playerSpeed = 0.15;
-    const keys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false };
+    const keys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false, w: false, a: false, s: false, d: false, e: false, E: false };
     const interactionDistance = 1.5;
     
     const CAMPFIRE_CIRCLE_RADIUS = 7.5; // Dotted circle radius around campfire
@@ -1386,6 +3148,17 @@
     let playerMesh = null;
     let campfireMesh = null;
     let groundMesh = null;
+    
+    // Camp structures
+    let craftingBenchMesh = null;
+    const bedMeshes = [];
+    const farmPlotMeshes = [];
+    let crockPotMesh = null;
+    let biofuelProcessorMesh = null;
+    const logWallMeshes = [];
+    const logWallSegments = [];
+    const bearTrapMeshes = [];
+    const saplingMeshes = [];
     
     // Entity storage
     const entities = [];
@@ -1428,6 +3201,26 @@
       };
     }
     
+    // Harder questions for Good Axe/Spear (both numbers 4 or higher)
+    function generateHarderQuestion() {
+      const a = 4 + Math.floor(Math.random() * 7); // 4-10
+      const b = 4 + Math.floor(Math.random() * 7); // 4-10
+      return {
+        equation: `${a} + ${b}`,
+        answer: a + b
+      };
+    }
+    
+    // Chainsaw question (single problem)
+    function generateChainsawQuestion() {
+      const a = 4 + Math.floor(Math.random() * 7); // 4-10
+      const b = 4 + Math.floor(Math.random() * 7); // 4-10
+      return {
+        equation: `${a} + ${b}`,
+        answer: a + b
+      };
+    }
+    
     function generateCoalOrMetalQuestion() {
       const a = 5 + Math.floor(Math.random() * 6);
       const b = 5 + Math.floor(Math.random() * 6);
@@ -1435,6 +3228,31 @@
         equation: `${a} + ${b}`,
         answer: a + b
       };
+    }
+    
+    function generateKeyQuestion() {
+      // Format: ? + b = c  OR  a + ? = c
+      // Both numbers between 0 and 10
+      const a = Math.floor(Math.random() * 11); // 0-10
+      const b = Math.floor(Math.random() * 11); // 0-10
+      const c = a + b;
+      
+      // Randomly choose which number is the mystery
+      if (Math.random() < 0.5) {
+        // ? + b = c (solve for a)
+        return {
+          equation: `? + ${b} = ${c}`,
+          answer: a,
+          isKeyQuestion: true  // Flag to not add "= ?" in display
+        };
+      } else {
+        // a + ? = c (solve for b)
+        return {
+          equation: `${a} + ? = ${c}`,
+          answer: b,
+          isKeyQuestion: true  // Flag to not add "= ?" in display
+        };
+      }
     }
     
     function generateUniqueQuestions(generator, count) {
@@ -1461,11 +3279,13 @@
     function generateEntities() {
       const minDistance = 10; // Spacing between entities
       const minCampfireDistance = 15; // Clear area around campfire
+      const fenceRadius = 14.5; // Keep entities outside the fenced area (approximate wallRadius)
+      const fencePadding = 3; // Extra padding around fence
       
       function isTooClose(x, z) {
-        // Check distance from campfire
+        // Check distance from campfire - entities must be outside the fenced area with padding
         const distFromCampfire = Math.sqrt(x * x + z * z);
-        if (distFromCampfire < minCampfireDistance) return true;
+        if (distFromCampfire < fenceRadius + fencePadding) return true; // Use fence radius + padding
         
         // Check distance from other entities
         for (const entity of entities) {
@@ -1498,7 +3318,7 @@
       placeEntity('tree', 'chop', 6);
       placeEntity('wolf', 'fightWolf', 3);
       placeEntity('fuel', 'collectFuel', 1);
-      placeEntity('fan', 'salvageFan', 1);
+      placeEntity('fan', 'salvageFan', 2);
       
       // Create 3D meshes for each entity
       entities.forEach(entity => {
@@ -1518,6 +3338,9 @@
           scene.add(mesh);
         }
       });
+      
+      // Mark rare entities based on spawn chances (after meshes are created)
+      markRareEntities();
     }
     
     // ============================================
@@ -1592,20 +3415,41 @@
       currentQuestionTimedOut = false;
       
       if (actionKey === 'fightWolf') {
-        currentQuestions = generateUniqueQuestions(generateWolfQuestion, 3);
+        // Spear: 2 harder questions, otherwise 3 normal questions
+        if (rewardsState.weapons.hasSpear) {
+          currentQuestions = generateUniqueQuestions(generateHarderQuestion, 2);
+        } else {
+          currentQuestions = generateUniqueQuestions(generateWolfQuestion, 3);
+        }
         mathBubbleLabel.textContent = "Fight Wolf!";
         mathTimerBar.style.display = 'block';
         mathQuestionCounter.style.display = 'block';
       } else if (actionKey === 'fightCultist') {
-        currentQuestions = generateUniqueQuestions(generateCultistQuestion, 3);
+        // Spear: 2 harder questions, otherwise 3 normal questions
+        if (rewardsState.weapons.hasSpear) {
+          currentQuestions = generateUniqueQuestions(generateHarderQuestion, 2);
+        } else {
+          currentQuestions = generateUniqueQuestions(generateCultistQuestion, 3);
+        }
         mathBubbleLabel.textContent = "Fight Cultist!";
         mathTimerBar.style.display = 'block';
         mathQuestionCounter.style.display = 'block';
       } else if (actionKey === 'chop') {
-        currentQuestions = generateUniqueQuestions(generateTreeQuestion, 3);
-        mathBubbleLabel.textContent = "Chop Tree";
+        // Chainsaw: 1 question, Good Axe: 2 harder questions, otherwise 3 normal questions
+        if (rewardsState.weapons.hasChainsaw) {
+          currentQuestions = [generateChainsawQuestion()];
+          mathBubbleLabel.textContent = "⛓️ Chainsaw Tree";
+          mathQuestionCounter.style.display = 'none';
+        } else if (rewardsState.weapons.hasGoodAxe) {
+          currentQuestions = generateUniqueQuestions(generateHarderQuestion, 2);
+          mathBubbleLabel.textContent = "🪓 Chop Tree";
+          mathQuestionCounter.style.display = 'block';
+        } else {
+          currentQuestions = generateUniqueQuestions(generateTreeQuestion, 3);
+          mathBubbleLabel.textContent = "Chop Tree";
+          mathQuestionCounter.style.display = 'block';
+        }
         mathTimerBar.style.display = 'none';
-        mathQuestionCounter.style.display = 'block';
       } else if (actionKey === 'collectFuel') {
         currentQuestions = [generateCoalOrMetalQuestion()];
         mathBubbleLabel.textContent = "Collect Fuel";
@@ -1616,6 +3460,12 @@
         mathBubbleLabel.textContent = "Salvage Fan";
         mathTimerBar.style.display = 'none';
         mathQuestionCounter.style.display = 'none';
+      } else if (actionKey === 'collectKey') {
+        currentQuestions = [generateKeyQuestion(), generateKeyQuestion(), generateKeyQuestion()];
+        const tierName = entity.tier.charAt(0).toUpperCase() + entity.tier.slice(1);
+        mathBubbleLabel.textContent = `🔑 ${tierName} Key`;
+        mathTimerBar.style.display = 'none';
+        mathQuestionCounter.style.display = 'block';
       }
       
       // Stop player movement
@@ -1631,7 +3481,8 @@
     
     function showCurrentQuestion() {
       const q = currentQuestions[currentQuestionIndex];
-      mathQuestion.textContent = `${q.equation} = ?`;
+      // Key questions already have the full equation, others need "= ?"
+      mathQuestion.textContent = q.isKeyQuestion ? q.equation : `${q.equation} = ?`;
       
       if (currentQuestions.length > 1) {
         mathQuestionCounter.textContent = `Question ${currentQuestionIndex + 1} of ${currentQuestions.length}`;
@@ -1708,7 +3559,7 @@
               
               // Lose 2 diamonds on death (can't go below 0)
               diamondsEarned = Math.max(0, diamondsEarned - 2);
-              dayDiamonds.textContent = `${diamondsEarned} 💎`;
+              updateRewardsDisplay();
               
               playerHealth = 100;
               updateHealthBar();
@@ -1840,7 +3691,7 @@
               
               // Lose 2 diamonds on death (can't go below 0)
               diamondsEarned = Math.max(0, diamondsEarned - 2);
-              dayDiamonds.textContent = `${diamondsEarned} 💎`;
+              updateRewardsDisplay();
               
               playerHealth = 100;
               updateHealthBar();
@@ -1886,23 +3737,64 @@
       const actionKey = currentAction;
       
       if (actionKey === 'chop') {
-        // Tree: get wood ONLY for questions answered correctly on first try
-        const wood = questionsCorrectFirstTry.filter(x => x === true).length;
-        const allThreeFirstTry = (questionsCorrectFirstTry.length === 3 && 
-                                   questionsCorrectFirstTry.every(x => x === true));
+        // Tree: get wood based on weapon
+        let woodEarned = 0;
+        let feedbackText = "";
         
-        if (wood > 0) {
-          woodCount.textContent = parseInt(woodCount.textContent, 10) + wood;
+        if (rewardsState.weapons.hasChainsaw) {
+          // Chainsaw: 1 question = 4 wood if correct on first try
+          const correctFirstTry = questionsCorrectFirstTry[0] === true;
+          if (correctFirstTry) {
+            woodEarned = 4;
+            feedbackText = `⛓️ Chainsaw! +4 wood`;
+          } else {
+            feedbackText = "No wood - need to answer correctly on first try!";
+          }
+        } else if (rewardsState.weapons.hasGoodAxe) {
+          // Good Axe: 2 questions, wood for each correct on first try
+          woodEarned = questionsCorrectFirstTry.filter(x => x === true).length;
+          const bothFirstTry = (questionsCorrectFirstTry.length === 2 && 
+                                 questionsCorrectFirstTry.every(x => x === true));
+          if (bothFirstTry) {
+            woodEarned += 1; // Bonus sapling
+            feedbackText = `✓ Perfect! +${woodEarned - 1} wood +1 sapling!`;
+          } else if (woodEarned > 0) {
+            feedbackText = `+${woodEarned} wood`;
+          } else {
+            feedbackText = "No wood - need to answer correctly on first try!";
+          }
+        } else {
+          // Normal axe: 3 questions, wood for each correct on first try
+          woodEarned = questionsCorrectFirstTry.filter(x => x === true).length;
+          const allThreeFirstTry = (questionsCorrectFirstTry.length === 3 && 
+                                     questionsCorrectFirstTry.every(x => x === true));
+          if (allThreeFirstTry) {
+            woodEarned += 1; // Bonus sapling
+            feedbackText = `✓ Perfect! +${woodEarned - 1} wood +1 sapling!`;
+          } else if (woodEarned > 0) {
+            feedbackText = `+${woodEarned} wood`;
+          } else {
+            feedbackText = "No wood - need to answer correctly on first try!";
+          }
         }
         
-        if (allThreeFirstTry) {
-          // Bonus sapling (represented as extra wood) - only if ALL 3 were first try
-          woodCount.textContent = parseInt(woodCount.textContent, 10) + 1;
-          mathBubbleFeedback.textContent = `✓ Perfect! +${wood} wood +1 sapling!`;
-        } else if (wood > 0) {
-          mathBubbleFeedback.textContent = `+${wood} wood`;
-        } else {
+        if (woodEarned > 0) {
+          woodCount.textContent = parseInt(woodCount.textContent, 10) + woodEarned;
+        }
+        mathBubbleFeedback.textContent = feedbackText;
+        
+        // Legacy code path removed - handled above
+        if (false) {
           mathBubbleFeedback.textContent = "No wood - you needed to answer correctly on first try!";
+        }
+        
+        // Check for rare Lanternbark Tree
+        if (currentInteractable && currentInteractable.isRare && currentInteractable.rareType === 'lanternbark') {
+          rewardsState.rareItems.lanternbark = true;
+          rewardsState.rareEntityMarkers.lanternbarkTree = null;
+          setTimeout(() => {
+            awardRareItemDiamond('Lanternbark Tree');
+          }, 100);
         }
         
         if (currentInteractable && currentInteractable.mesh) {
@@ -1910,6 +3802,9 @@
           const index = entities.indexOf(currentInteractable);
           if (index > -1) entities.splice(index, 1);
         }
+        
+        // Check if we need to respawn trees
+        checkTreeCount();
       } else if (actionKey === 'fightCultist') {
         // Cultist defeated - remove from scene
         if (currentInteractable && currentInteractable.mesh) {
@@ -1932,17 +3827,29 @@
       } else if (actionKey === 'fightWolf') {
         // Wolf: get meat ONLY for questions answered correctly on first try AND on time
         const meat = questionsCorrectFirstTry.filter(x => x === true).length;
+        const maxQuestions = rewardsState.weapons.hasSpear ? 2 : 3;
+        const isPerfect = meat === maxQuestions;
         
         if (meat > 0) {
           meatCount.textContent = parseInt(meatCount.textContent, 10) + meat;
         }
         
-        if (meat === 3) {
-          mathBubbleFeedback.textContent = `✓ Wolf defeated! +${meat} meat`;
+        if (isPerfect) {
+          const spearPrefix = rewardsState.weapons.hasSpear ? "🔱 " : "";
+          mathBubbleFeedback.textContent = `${spearPrefix}✓ Wolf defeated! +${meat} meat`;
         } else if (meat > 0) {
           mathBubbleFeedback.textContent = `+${meat} meat`;
         } else {
           mathBubbleFeedback.textContent = "No meat - too slow or wrong answers!";
+        }
+        
+        // Check for rare Silver-Gleam Wolf
+        if (currentInteractable && currentInteractable.isRare && currentInteractable.rareType === 'silverWolf') {
+          rewardsState.rareItems.silverWolf = true;
+          rewardsState.rareEntityMarkers.silverGleamWolf = null;
+          setTimeout(() => {
+            awardRareItemDiamond('Silver-Gleam Wolf');
+          }, 100);
         }
         
         if (currentInteractable && currentInteractable.mesh) {
@@ -1961,6 +3868,15 @@
           mathBubbleFeedback.textContent = "No fuel - you needed to answer correctly on first try!";
         }
         
+        // Check for rare Frost-Locked Canister
+        if (currentInteractable && currentInteractable.isRare && currentInteractable.rareType === 'frostCanister') {
+          rewardsState.rareItems.frostCanister = true;
+          rewardsState.rareEntityMarkers.frostLockedCanister = null;
+          setTimeout(() => {
+            awardRareItemDiamond('Frost-Locked Canister');
+          }, 100);
+        }
+        
         if (currentInteractable && currentInteractable.mesh) {
           scene.remove(currentInteractable.mesh);
           const index = entities.indexOf(currentInteractable);
@@ -1977,10 +3893,102 @@
           mathBubbleFeedback.textContent = "No metal - you needed to answer correctly on first try!";
         }
         
+        // Check for rare Whispering Fan Blade
+        if (currentInteractable && currentInteractable.isRare && currentInteractable.rareType === 'whisperingFan') {
+          rewardsState.rareItems.whisperingFan = true;
+          rewardsState.rareEntityMarkers.whisperingFanBlade = null;
+          setTimeout(() => {
+            awardRareItemDiamond('Whispering Fan Blade');
+          }, 100);
+        }
+        
         if (currentInteractable && currentInteractable.mesh) {
           scene.remove(currentInteractable.mesh);
           const index = entities.indexOf(currentInteractable);
           if (index > -1) entities.splice(index, 1);
+        }
+      } else if (actionKey === 'collectKey') {
+        // Key collection - always succeeds (even if wrong first try, they still get the key)
+        const tier = currentInteractable.tier;
+        rewardsState.keys[tier]++;
+        
+        const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
+        const collected = rewardsState.keys[tier];
+        const required = rewardsState.keysRequired[tier];
+        
+        mathBubbleFeedback.textContent = `✓ Got ${tierName} Key! (${collected}/${required})`;
+        
+        // Remove the key from the world
+        if (currentInteractable && currentInteractable.mesh) {
+          scene.remove(currentInteractable.mesh);
+          const index = keyEntities.indexOf(currentInteractable);
+          if (index > -1) keyEntities.splice(index, 1);
+        }
+        
+        updateRewardsDisplay();
+        
+        // Check if we have all keys for this tier
+        if (collected >= required) {
+          setTimeout(() => {
+            onAllKeysCollected(tier);
+          }, 1000);
+        } else {
+          // Schedule next key spawn after delay
+          scheduleNextKeySpawn();
+        }
+      } else if (actionKey === 'harvestFarm') {
+        // Farm harvest: add carrots based on farm plots owned
+        const totalCarrots = farmPlotsOwned * 6;
+        carrots += totalCarrots;
+        carrotCount.textContent = carrots;
+        farmPlotDaysUntilHarvest = 2; // Reset timer
+        mathBubbleFeedback.textContent = `✓ Harvested! +${totalCarrots} carrots`;
+        updateInventoryDisplay();
+        updateFarmPlotVisuals(); // Hide carrots after harvest
+      } else if (actionKey === 'cookStew') {
+        // Crock pot: deduct 3 food, add 1 stew
+        let foodToRemove = 3;
+        const currentMeat = parseInt(meatCount.textContent, 10);
+        
+        // First use carrots, then meat
+        if (carrots >= foodToRemove) {
+          carrots -= foodToRemove;
+          carrotCount.textContent = carrots;
+        } else {
+          const carrotsUsed = carrots;
+          carrots = 0;
+          carrotCount.textContent = 0;
+          foodToRemove -= carrotsUsed;
+          meatCount.textContent = currentMeat - foodToRemove;
+        }
+        
+        stew++;
+        stewCount.textContent = stew;
+        mathBubbleFeedback.textContent = "✓ Cooked! +1 stew";
+        updateInventoryDisplay();
+      } else if (actionKey === 'makeBiofuel') {
+        // Biofuel processor: 1 meat + 1 wood = biofuel added directly to fire
+        const currentMeat = parseInt(meatCount.textContent, 10);
+        const currentWood = parseInt(woodCount.textContent, 10);
+        meatCount.textContent = currentMeat - 1;
+        woodCount.textContent = currentWood - 1;
+        
+        // Add biofuel directly to fire (17% at L1, 6% at L2+)
+        const biofuelValue = currentFireLevel === 1 ? 17 : 6;
+        fireStrength = Math.min(100, fireStrength + biofuelValue);
+        fireBar.style.width = `${fireStrength}%`;
+        checkFireLevelUp();
+        
+        mathBubbleFeedback.textContent = `✓ Processed! +${biofuelValue}% fire`;
+        updateInventoryDisplay();
+      } else if (actionKey === 'craftingMath') {
+        // Crafting math problem completed - now craft the item
+        if (pendingCraftItem) {
+          mathBubbleFeedback.textContent = "✓ Correct!";
+          setTimeout(() => {
+            craftItem(pendingCraftItem);
+            pendingCraftItem = null;
+          }, 500);
         }
       }
     }
@@ -2015,6 +4023,229 @@
           return;
         }
       }
+      
+      // Check keys
+      for (const key of keyEntities) {
+        const dx = playerX - key.x;
+        const dz = playerZ - key.z;
+        const distance = Math.sqrt(dx * dx + dz * dz);
+        
+        if (distance < interactionDistance) {
+          showAction('collectKey', key);
+          return;
+        }
+      }
+      
+      // Check proximity to chests - auto-open when close
+      for (const chest of chestEntities) {
+        const dx = playerX - chest.x;
+        const dz = playerZ - chest.z;
+        const distance = Math.sqrt(dx * dx + dz * dz);
+        
+        if (distance < interactionDistance + 1) { // Slightly larger range for chests
+          openChest(chest);
+          return;
+        }
+      }
+    }
+    
+    // Open a chest and award the reward
+    function openChest(chest) {
+      const tier = chest.tier;
+      const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
+      
+      // Remove chest from world
+      if (chest.mesh) {
+        scene.remove(chest.mesh);
+        const index = chestEntities.indexOf(chest);
+        if (index > -1) chestEntities.splice(index, 1);
+      }
+      
+      // Mark as opened
+      rewardsState.chestsOpened[tier] = true;
+      rewardsState.activeChest = null;
+      
+      // Determine and give the reward
+      const reward = determineChestReward(tier);
+      giveChestReward(reward);
+      
+      // Show reward popup
+      showChestRewardPopup(tierName, reward);
+      
+      // Start spawning next tier of keys after chest is opened
+      const tierOrder = ['wooden', 'golden', 'ruby', 'diamond', 'obsidian'];
+      const currentIndex = tierOrder.indexOf(tier);
+      
+      if (currentIndex < tierOrder.length - 1) {
+        const nextTier = tierOrder[currentIndex + 1];
+        rewardsState.currentKeyTier = nextTier;
+        keysSpawnedThisTier = 0;
+        
+        // Spawn first key of next tier after a short delay
+        setTimeout(() => {
+          spawnSingleKey(nextTier);
+        }, 3000);
+      }
+      
+      updateRewardsDisplay();
+    }
+    
+    // Determine what reward comes from a chest
+    function determineChestReward(tier) {
+      const roll = Math.random();
+      
+      switch (tier) {
+        case 'wooden':
+          // 50% Good Axe, 25% 3 metal scraps, 25% 1 fuel canister
+          if (roll < 0.5) {
+            return { type: 'goodAxe', name: 'Good Axe', description: 'Trees now take 2 harder problems to chop!' };
+          } else if (roll < 0.75) {
+            return { type: 'scraps', amount: 3, name: '3 Metal Scraps', description: 'Added to your inventory!' };
+          } else {
+            return { type: 'fuel', amount: 1, name: '1 Fuel Canister', description: 'Added to your inventory!' };
+          }
+          
+        case 'golden':
+          // If already have Good Axe: 50% scraps, 50% fuel
+          // Otherwise: Good Axe
+          if (rewardsState.weapons.hasGoodAxe) {
+            if (roll < 0.5) {
+              return { type: 'scraps', amount: 3, name: '3 Metal Scraps', description: 'Added to your inventory!' };
+            } else {
+              return { type: 'fuel', amount: 1, name: '1 Fuel Canister', description: 'Added to your inventory!' };
+            }
+          } else {
+            return { type: 'goodAxe', name: 'Good Axe', description: 'Trees now take 2 harder problems to chop!' };
+          }
+          
+        case 'ruby':
+          return { type: 'spear', name: 'Spear', description: 'Wolves and cultists now take 2 harder problems to defeat!' };
+          
+        case 'diamond':
+          return { type: 'diamonds', amount: 3, name: '3 Diamonds', description: 'Shiny!' };
+          
+        case 'obsidian':
+          return { type: 'chainsaw', name: 'Chainsaw', description: 'Trees now take just 1 problem for 4 wood!' };
+          
+        default:
+          return { type: 'fuel', amount: 1, name: '1 Fuel Canister', description: 'Added to your inventory!' };
+      }
+    }
+    
+    // Give the chest reward to the player
+    function giveChestReward(reward) {
+      switch (reward.type) {
+        case 'goodAxe':
+          rewardsState.weapons.hasGoodAxe = true;
+          updateWeaponsDisplay();
+          break;
+        case 'spear':
+          rewardsState.weapons.hasSpear = true;
+          updateWeaponsDisplay();
+          break;
+        case 'chainsaw':
+          rewardsState.weapons.hasChainsaw = true;
+          // Chainsaw replaces good axe
+          rewardsState.weapons.hasGoodAxe = false;
+          updateWeaponsDisplay();
+          break;
+        case 'scraps':
+          const currentScraps = parseInt(scrapCount.textContent) || 0;
+          scrapCount.textContent = currentScraps + reward.amount;
+          break;
+        case 'fuel':
+          const currentFuel = parseInt(coalCount.textContent) || 0;
+          coalCount.textContent = currentFuel + reward.amount;
+          break;
+        case 'diamonds':
+          // Award diamonds
+          for (let i = 0; i < reward.amount; i++) {
+            diamondsEarned++;
+          }
+          break;
+      }
+    }
+    
+    // Show a popup for the chest reward
+    function showChestRewardPopup(chestName, reward) {
+      // Create popup overlay
+      const popup = document.createElement('div');
+      popup.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+        animation: fadeIn 0.3s ease;
+      `;
+      
+      // Emoji for reward type
+      const rewardEmoji = {
+        goodAxe: '🪓',
+        spear: '🔱',
+        chainsaw: '⛓️',
+        scraps: '⚙️',
+        fuel: '⛽',
+        diamonds: '💎'
+      };
+      
+      const emoji = rewardEmoji[reward.type] || '🎁';
+      
+      popup.innerHTML = `
+        <div style="
+          background: linear-gradient(135deg, #2a1a0a 0%, #4a2a1a 100%);
+          border: 4px solid #FFD700;
+          border-radius: 20px;
+          padding: 40px 60px;
+          text-align: center;
+          box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
+          animation: popIn 0.4s ease;
+        ">
+          <div style="font-size: 48px; margin-bottom: 10px;">🎉</div>
+          <div style="font-size: 24px; color: #FFD700; margin-bottom: 20px; font-family: 'Cinzel', serif;">
+            ${chestName} Chest Opened!
+          </div>
+          <div style="font-size: 64px; margin: 20px 0;">${emoji}</div>
+          <div style="font-size: 28px; color: #fff; margin-bottom: 10px; font-family: 'Cinzel', serif;">
+            ${reward.name}
+          </div>
+          <div style="font-size: 18px; color: #ccc; margin-bottom: 30px;">
+            ${reward.description}
+          </div>
+          <button id="closeChestPopup" style="
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-family: 'Cinzel', serif;
+            color: #2a1a0a;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+          ">Continue</button>
+        </div>
+      `;
+      
+      document.body.appendChild(popup);
+      
+      // Add close handler
+      document.getElementById('closeChestPopup').addEventListener('click', () => {
+        popup.remove();
+      });
+      
+      // Also close on any key press
+      const closeOnKey = (e) => {
+        popup.remove();
+        document.removeEventListener('keydown', closeOnKey);
+      };
+      setTimeout(() => {
+        document.addEventListener('keydown', closeOnKey);
+      }, 500);
     }
     
     // ============================================
@@ -2101,21 +4332,240 @@
       // Expand the map with new entities
       expandMap();
       
+      // Start key spawning at Fire Level 2
+      if (currentFireLevel === 2 && rewardsState.currentKeyTier === null) {
+        rewardsState.currentKeyTier = 'wooden';
+        keysSpawnedThisTier = 0;
+        spawnSingleKey('wooden');
+      }
+      
       // Show notification
       showMapExpansionNotification();
+    }
+    
+    // Track how many keys have been spawned for current tier
+    let keysSpawnedThisTier = 0;
+    let keySpawnTimeout = null;
+    const KEY_SPAWN_DELAY = 60000; // 60 seconds between keys
+    
+    // Called when all keys of a tier are collected
+    function onAllKeysCollected(tier) {
+      const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
+      showCraftNotification(`🎉 All ${tierName} Keys collected! A chest has appeared - find it!`);
+      
+      // Clear any pending key spawn
+      if (keySpawnTimeout) {
+        clearTimeout(keySpawnTimeout);
+        keySpawnTimeout = null;
+      }
+      
+      // Spawn the chest - next tier keys will spawn when chest is OPENED
+      spawnChest(tier);
+      
+      // Clear current key tier until chest is opened
+      rewardsState.currentKeyTier = null;
+    }
+    
+    // Schedule the next key spawn after a delay
+    function scheduleNextKeySpawn() {
+      const tier = rewardsState.currentKeyTier;
+      if (!tier) return;
+      
+      const required = rewardsState.keysRequired[tier];
+      const collected = rewardsState.keys[tier];
+      
+      // Only spawn more if we haven't spawned all required yet
+      // and there are no keys currently in the world waiting to be collected
+      if (keysSpawnedThisTier < required && keyEntities.length === 0) {
+        keySpawnTimeout = setTimeout(() => {
+          if (rewardsState.currentKeyTier === tier) { // Make sure tier hasn't changed
+            const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
+            spawnSingleKey(tier);
+          }
+        }, KEY_SPAWN_DELAY);
+      }
+    }
+    
+    // Spawn a chest of a specific tier
+    function spawnChest(tier) {
+      const minDistance = 10;
+      const fenceRadius = 14.5;
+      const fencePadding = 3;
+      
+      function isTooClose(x, z) {
+        const distFromCampfire = Math.sqrt(x * x + z * z);
+        if (distFromCampfire < fenceRadius + fencePadding) return true;
+        
+        // Check distance from other entities, keys, and chests
+        for (const entity of [...entities, ...keyEntities, ...chestEntities]) {
+          const dx = x - entity.x;
+          const dz = z - entity.z;
+          const dist = Math.sqrt(dx * dx + dz * dz);
+          if (dist < minDistance) return true;
+        }
+        return false;
+      }
+      
+      let spawned = false;
+      let attempts = 0;
+      let chestX, chestZ;
+      
+      while (!spawned && attempts < 100) {
+        const angle = Math.random() * Math.PI * 2;
+        const radius = fenceRadius + fencePadding + 8 + Math.random() * (worldRadius - fenceRadius - fencePadding - 15);
+        chestX = Math.cos(angle) * radius;
+        chestZ = Math.sin(angle) * radius;
+        
+        const maxCoord = worldSize / 2 - 3;
+        if (Math.abs(chestX) < maxCoord && Math.abs(chestZ) < maxCoord && !isTooClose(chestX, chestZ)) {
+          spawned = true;
+        }
+        attempts++;
+      }
+      
+      if (spawned) {
+        const chestEntity = { type: 'chest', action: 'openChest', tier: tier, x: chestX, z: chestZ };
+        const mesh = createChest(chestX, chestZ, tier);
+        chestEntity.mesh = mesh;
+        chestEntities.push(chestEntity);
+        scene.add(mesh);
+        
+        // Mark the chest as spawned in rewards state
+        rewardsState.chestSpawned[tier] = true;
+        
+        console.log(`Spawned ${tier} chest at (${chestX.toFixed(1)}, ${chestZ.toFixed(1)})`);
+      } else {
+        console.warn(`Failed to spawn ${tier} chest after ${attempts} attempts`);
+      }
+    }
+    
+    // Spawn a single key
+    function spawnSingleKey(tier) {
+      const minDistance = 8;
+      const fenceRadius = 14.5;
+      const fencePadding = 3;
+      
+      function isTooClose(x, z) {
+        const distFromCampfire = Math.sqrt(x * x + z * z);
+        if (distFromCampfire < fenceRadius + fencePadding) return true;
+        
+        // Check distance from other entities and keys
+        for (const entity of [...entities, ...keyEntities]) {
+          const dx = x - entity.x;
+          const dz = z - entity.z;
+          const dist = Math.sqrt(dx * dx + dz * dz);
+          if (dist < minDistance) return true;
+        }
+        return false;
+      }
+      
+      let spawned = false;
+      let attempts = 0;
+      
+      while (!spawned && attempts < 50) {
+        const angle = Math.random() * Math.PI * 2;
+        const radius = fenceRadius + fencePadding + 5 + Math.random() * (worldRadius - fenceRadius - fencePadding - 10);
+        const x = Math.cos(angle) * radius;
+        const z = Math.sin(angle) * radius;
+        
+        const maxCoord = worldSize / 2 - 2;
+        if (Math.abs(x) < maxCoord && Math.abs(z) < maxCoord && !isTooClose(x, z)) {
+          const keyEntity = { type: 'key', action: 'collectKey', tier: tier, x, z };
+          const mesh = createKey(x, z, tier);
+          keyEntity.mesh = mesh;
+          keyEntities.push(keyEntity);
+          scene.add(mesh);
+          keysSpawnedThisTier++;
+          spawned = true;
+        }
+        attempts++;
+      }
+      
+      console.log(`Spawned ${tier} key (${keysSpawnedThisTier}/${rewardsState.keysRequired[tier]})`);
+      updateRewardsDisplay();
+    }
+    
+    // Check and respawn trees if count drops below minimum
+    function checkTreeCount() {
+      const treeCount = entities.filter(e => e.type === 'tree').length;
+      const minTrees = 4;
+      
+      if (treeCount < minTrees) {
+        const treesToSpawn = minTrees - treeCount;
+        spawnTreesOffScreen(treesToSpawn);
+      }
+    }
+    
+    function spawnTreesOffScreen(count) {
+      const minDistance = 8;
+      const fenceRadius = 14.5;
+      const fencePadding = 3;
+      
+      // Calculate which direction is "behind" the camera (off-screen)
+      // Camera looks from playerZ + 30 toward player, so spawn trees at low Z values (top of screen)
+      // or at edges far from player
+      
+      function isTooClose(x, z) {
+        // Check distance from campfire
+        const distFromCampfire = Math.sqrt(x * x + z * z);
+        if (distFromCampfire < fenceRadius + fencePadding) return true;
+        
+        // Check distance from player (want to spawn away from player)
+        const distFromPlayer = Math.sqrt((x - playerX) ** 2 + (z - playerZ) ** 2);
+        if (distFromPlayer < 15) return true; // At least 15 units from player (off-screen)
+        
+        // Check distance from other entities
+        for (const entity of entities) {
+          const dx = x - entity.x;
+          const dz = z - entity.z;
+          const dist = Math.sqrt(dx * dx + dz * dz);
+          if (dist < minDistance) return true;
+        }
+        
+        return false;
+      }
+      
+      let spawned = 0;
+      let attempts = 0;
+      
+      while (spawned < count && attempts < count * 50) {
+        // Try to spawn in the current world bounds, preferring areas away from player
+        const angle = Math.random() * Math.PI * 2;
+        const radius = fenceRadius + fencePadding + 5 + Math.random() * (worldRadius - fenceRadius - fencePadding - 10);
+        const x = Math.cos(angle) * radius;
+        const z = Math.sin(angle) * radius;
+        
+        // Make sure it's within world bounds
+        const maxCoord = worldSize / 2 - 2;
+        if (Math.abs(x) < maxCoord && Math.abs(z) < maxCoord && !isTooClose(x, z)) {
+          const entity = { type: 'tree', action: 'chop', x, z };
+          const mesh = createTree(x, z);
+          entity.mesh = mesh;
+          entities.push(entity);
+          scene.add(mesh);
+          spawned++;
+        }
+        attempts++;
+      }
+      
+      if (spawned > 0) {
+        console.log(`Respawned ${spawned} trees to maintain minimum count`);
+      }
     }
     
     function expandMap() {
       // Generate more entities with better spacing
       const minDistance = 10; // Same spacing as initial generation
+      const fenceRadius = 14.5; // Keep entities outside the fenced area
+      const fencePadding = 3; // Extra padding around fence
       
       function isTooClose(x, z) {
         const campfireX = 0;
         const campfireZ = 0;
         
-        // Check distance from campfire
+        // Check distance from campfire - entities must be outside the fenced area with padding
         const distFromCampfire = Math.sqrt(x * x + z * z);
-        if (distFromCampfire < 15) return true;
+        if (distFromCampfire < fenceRadius + fencePadding) return true; // Use fence radius + padding
         
         // Check distance from other entities
         for (const entity of entities) {
@@ -2167,7 +4617,7 @@
       const baseTreeCount = 6;
       const baseWolfCount = 3;
       const baseFuelCount = 1;
-      const baseFanCount = 1;
+      const baseFanCount = 2;
       
       // Scale based on current fire level
       const scaleFactor = currentFireLevel;
@@ -2176,6 +4626,9 @@
       placeNewEntities('wolf', 'fightWolf', baseWolfCount * scaleFactor);
       placeNewEntities('fuel', 'collectFuel', baseFuelCount * scaleFactor);
       placeNewEntities('fan', 'salvageFan', baseFanCount * scaleFactor);
+      
+      // Check for rare items in newly spawned entities
+      markRareEntities();
     }
     
     function showMapExpansionNotification() {
@@ -2252,13 +4705,27 @@
           diamondsEarned++;
           console.log('Night ended. Diamond awarded! New total:', diamondsEarned);
           
-          currentDay++;
+          // Day advances by 1 + number of beds owned
+          const daysToAdd = 1 + bedsOwned;
+          currentDay += daysToAdd;
           dayCounter.textContent = currentDay;
-          dayDiamonds.textContent = `${diamondsEarned} 💎`;
+          
+          // Check for milestone rewards at the start of the new day
+          checkMilestones(currentDay);
+          updateRewardsDisplay();
+          
           cycleTimeRemaining = DAY_DURATION;
           setNightMode(false);
           nightWarningShown = false;
           cultistsSpawned = false;
+          cultistsDefeated = 0;
+          cultistRewardGiven = false;
+          
+          // Decrement farm plot harvest timer
+          if (farmPlotsOwned > 0) {
+            farmPlotDaysUntilHarvest -= daysToAdd;
+            updateFarmPlotVisuals(); // Show carrots if ready
+          }
         } else {
           // Day ended, night begins
           cycleTimeRemaining = NIGHT_DURATION;
@@ -2320,7 +4787,8 @@
           z: z,
           targetX: x,
           targetZ: z,
-          mesh: createCultist(x, z)
+          mesh: createCultist(x, z),
+          seekingEntrance: false
         };
         
         cultists.push(cultist);
@@ -2358,30 +4826,242 @@
     function updateCultists() {
       if (isPaused || isDialogOpen) return;
       
-      const cultistSpeed = 0.03; // Slow movement speed
+      const cultistSpeed = 0.06; // Movement speed
+      const fenceRadius = 14.5; // Fence wall radius
+      const fenceThickness = 2.5; // How thick the fence barrier is (to catch corner gaps)
+      // Entrance is at angle π/2 (positive Z direction, toward camera at bottom of screen)
+      const entranceX = 0;
+      const entranceZ = fenceRadius + 1; // Target point at the entrance
+      const entranceAngle = Math.PI / 2;
+      const entranceHalfWidth = Math.PI / 7; // Angular half-width of entrance (~25 degrees each side)
+      
+      function normalizeAngle(angle) {
+        while (angle > Math.PI) angle -= Math.PI * 2;
+        while (angle < -Math.PI) angle += Math.PI * 2;
+        return angle;
+      }
+      
+      function getRadius(x, z) {
+        return Math.sqrt(x * x + z * z);
+      }
+      
+      // Get which segment (0-7) a position falls into
+      function getSegmentIndex(x, z) {
+        let angle = Math.atan2(z, x);
+        if (angle < 0) angle += Math.PI * 2;
+        const segmentAngle = Math.PI / 4; // Each segment spans 45 degrees
+        return Math.floor((angle + segmentAngle / 2) / segmentAngle) % 8;
+      }
+      
+      // Check if position is in an open segment (entrance or unbuilt wall)
+      function isInOpenSegment(x, z) {
+        const segment = getSegmentIndex(x, z);
+        // Segment 2 is always open (entrance)
+        if (segment === 2) return true;
+        // Other segments are open if no wall is built there
+        return !activeWallSegments.has(segment);
+      }
+      
+      function isInsideFence(x, z) {
+        return getRadius(x, z) < fenceRadius - fenceThickness;
+      }
+      
+      function isOutsideFence(x, z) {
+        return getRadius(x, z) > fenceRadius + fenceThickness;
+      }
+      
+      function isInFenceZone(x, z) {
+        const r = getRadius(x, z);
+        return r >= fenceRadius - fenceThickness && r <= fenceRadius + fenceThickness;
+      }
+      
+      // Check if a position is blocked by the fence
+      function isBlockedByFence(x, z) {
+        if (!isInFenceZone(x, z)) return false;
+        // Blocked only if this segment has a wall
+        return !isInOpenSegment(x, z);
+      }
+      
+      // Check if movement would be blocked
+      function isMovementBlocked(fromX, fromZ, toX, toZ) {
+        // Check if destination is blocked
+        if (isBlockedByFence(toX, toZ)) {
+          return true;
+        }
+        
+        // Check if crossing the fence perimeter (not through an open segment)
+        const fromR = getRadius(fromX, fromZ);
+        const toR = getRadius(toX, toZ);
+        const crossingIn = fromR > fenceRadius && toR < fenceRadius;
+        const crossingOut = fromR < fenceRadius && toR > fenceRadius;
+        
+        if (crossingIn || crossingOut) {
+          const midX = (fromX + toX) / 2;
+          const midZ = (fromZ + toZ) / 2;
+          // Only allow crossing through open segments
+          if (!isInOpenSegment(midX, midZ)) {
+            return true;
+          }
+        }
+        
+        return false;
+      }
+      
+      // Try to move cultist, returns true if moved
+      function tryMove(cultist, moveX, moveZ) {
+        const newX = cultist.x + moveX;
+        const newZ = cultist.z + moveZ;
+        
+        if (!isMovementBlocked(cultist.x, cultist.z, newX, newZ)) {
+          cultist.x = newX;
+          cultist.z = newZ;
+          return true;
+        }
+        
+        // Try sliding - X only
+        if (Math.abs(moveX) > 0.001) {
+          const slideX = cultist.x + moveX;
+          if (!isMovementBlocked(cultist.x, cultist.z, slideX, cultist.z)) {
+            cultist.x = slideX;
+            return true;
+          }
+        }
+        
+        // Try sliding - Z only
+        if (Math.abs(moveZ) > 0.001) {
+          const slideZ = cultist.z + moveZ;
+          if (!isMovementBlocked(cultist.x, cultist.z, cultist.x, slideZ)) {
+            cultist.z = slideZ;
+            return true;
+          }
+        }
+        
+        return false;
+      }
+      
+      // Push cultist out of fence zone if stuck
+      function pushOutOfFence(cultist) {
+        if (isBlockedByFence(cultist.x, cultist.z)) {
+          const r = getRadius(cultist.x, cultist.z);
+          const angle = Math.atan2(cultist.z, cultist.x);
+          // Push outward
+          const newR = fenceRadius + fenceThickness + 0.5;
+          cultist.x = Math.cos(angle) * newR;
+          cultist.z = Math.sin(angle) * newR;
+          return true;
+        }
+        return false;
+      }
+      
+      // Find the nearest open segment to a position
+      function findNearestOpenSegment(x, z) {
+        let angle = Math.atan2(z, x);
+        if (angle < 0) angle += Math.PI * 2;
+        
+        // Check segments in order of angular distance
+        const currentSegment = Math.floor((angle + Math.PI / 8) / (Math.PI / 4)) % 8;
+        
+        // Check current segment and spiral outward
+        for (let offset = 0; offset < 8; offset++) {
+          // Check both directions
+          const seg1 = (currentSegment + offset) % 8;
+          const seg2 = (currentSegment - offset + 8) % 8;
+          
+          if (seg1 === 2 || !activeWallSegments.has(seg1)) {
+            return seg1;
+          }
+          if (offset > 0 && (seg2 === 2 || !activeWallSegments.has(seg2))) {
+            return seg2;
+          }
+        }
+        return 2; // Default to entrance
+      }
+      
+      // Get position of an open segment entry point
+      function getSegmentEntryPoint(segmentIndex) {
+        const segmentAngle = (segmentIndex / 8) * Math.PI * 2;
+        return {
+          x: Math.cos(segmentAngle) * (fenceRadius + 1),
+          z: Math.sin(segmentAngle) * (fenceRadius + 1)
+        };
+      }
       
       cultists.forEach(cultist => {
-        // Move towards player
-        const dx = playerX - cultist.x;
-        const dz = playerZ - cultist.z;
-        const distance = Math.sqrt(dx * dx + dz * dz);
+        // First, check if stuck in fence and push out
+        pushOutOfFence(cultist);
         
-        if (distance > 0.5) { // Don't get too close, let proximity detection handle combat
-          const moveX = (dx / distance) * cultistSpeed;
-          const moveZ = (dz / distance) * cultistSpeed;
+        const inside = isInsideFence(cultist.x, cultist.z);
+        const cultistAngle = Math.atan2(cultist.z, cultist.x);
+        
+        let moved = false;
+        let targetX = playerX;
+        let targetZ = playerZ;
+        
+        // Calculate direction to player
+        const dxToPlayer = playerX - cultist.x;
+        const dzToPlayer = playerZ - cultist.z;
+        const distToPlayer = Math.sqrt(dxToPlayer * dxToPlayer + dzToPlayer * dzToPlayer);
+        
+        if (distToPlayer > 0.5) {
+          // First, always try to move directly toward the player
+          const moveX = (dxToPlayer / distToPlayer) * cultistSpeed;
+          const moveZ = (dzToPlayer / distToPlayer) * cultistSpeed;
+          moved = tryMove(cultist, moveX, moveZ);
           
-          cultist.x += moveX;
-          cultist.z += moveZ;
-          
-          // Update mesh position
-          if (cultist.mesh) {
-            cultist.mesh.position.x = cultist.x;
-            cultist.mesh.position.z = cultist.z;
+          // If blocked and there are walls, find an open segment to go through
+          if (!moved && activeWallSegments.size > 0 && !inside) {
+            const nearestOpen = findNearestOpenSegment(cultist.x, cultist.z);
+            const entryPoint = getSegmentEntryPoint(nearestOpen);
+            targetX = entryPoint.x;
+            targetZ = entryPoint.z;
             
-            // Rotate to face player
-            const angle = Math.atan2(dx, dz);
-            cultist.mesh.rotation.y = angle;
+            const dxToOpen = targetX - cultist.x;
+            const dzToOpen = targetZ - cultist.z;
+            const distToOpen = Math.sqrt(dxToOpen * dxToOpen + dzToOpen * dzToOpen);
+            
+            if (distToOpen > 0.5) {
+              // Try moving toward the open segment
+              const moveToOpenX = (dxToOpen / distToOpen) * cultistSpeed;
+              const moveToOpenZ = (dzToOpen / distToOpen) * cultistSpeed;
+              moved = tryMove(cultist, moveToOpenX, moveToOpenZ);
+              
+              // If still blocked, move tangentially around the fence
+              if (!moved) {
+                const openAngle = (nearestOpen / 8) * Math.PI * 2;
+                let cultAngle = cultistAngle;
+                if (cultAngle < 0) cultAngle += Math.PI * 2;
+                
+                let diff = openAngle - cultAngle;
+                if (diff > Math.PI) diff -= Math.PI * 2;
+                if (diff < -Math.PI) diff += Math.PI * 2;
+                const direction = diff > 0 ? 1 : -1;
+                
+                // Move tangentially around the fence
+                const tangentX = -Math.sin(cultistAngle) * direction * cultistSpeed;
+                const tangentZ = Math.cos(cultistAngle) * direction * cultistSpeed;
+                
+                moved = tryMove(cultist, tangentX, tangentZ);
+                
+                // If still stuck, try moving outward + tangent
+                if (!moved) {
+                  const outwardX = Math.cos(cultistAngle) * cultistSpeed * 0.5;
+                  const outwardZ = Math.sin(cultistAngle) * cultistSpeed * 0.5;
+                  tryMove(cultist, outwardX + tangentX * 0.5, outwardZ + tangentZ * 0.5);
+                }
+              }
+            }
           }
+        }
+        
+        // Update mesh position
+        if (cultist.mesh) {
+          cultist.mesh.position.x = cultist.x;
+          cultist.mesh.position.z = cultist.z;
+          
+          // Face toward target
+          const faceDx = targetX - cultist.x;
+          const faceDz = targetZ - cultist.z;
+          cultist.mesh.rotation.y = Math.atan2(faceDx, faceDz);
         }
       });
       
@@ -2459,7 +5139,7 @@
           
           // Lose 2 diamonds on death (can't go below 0)
           diamondsEarned = Math.max(0, diamondsEarned - 2);
-          dayDiamonds.textContent = `${diamondsEarned} 💎`;
+          updateRewardsDisplay();
           
           playerHealth = 100;
           updateHealthBar();
@@ -2536,6 +5216,37 @@
       minimapCtx.arc(campfireX, campfireY, 3, 0, Math.PI * 2);
       minimapCtx.fill();
       
+      // Draw chests on minimap
+      for (const chest of chestEntities) {
+          const chestMinimapX = ((chest.x / worldSize) + 0.5) * 150;
+          const chestMinimapY = ((chest.z / worldSize) + 0.5) * 150;
+          
+          // Chest colors for minimap
+          const chestMinimapColors = {
+            wooden: '#8B4513',
+            golden: '#FFD700',
+            ruby: '#E0115F',
+            diamond: '#00BFFF',
+            obsidian: '#9400D3'
+          };
+          
+          const chestColor = chestMinimapColors[chest.tier] || '#8B4513';
+          
+          // Draw pulsing chest icon
+          const pulseSize = 4 + Math.sin(Date.now() / 200) * 1;
+          
+          // Outer glow
+          minimapCtx.fillStyle = chestColor;
+          minimapCtx.globalAlpha = 0.3;
+          minimapCtx.beginPath();
+          minimapCtx.arc(chestMinimapX, chestMinimapY, pulseSize + 3, 0, Math.PI * 2);
+          minimapCtx.fill();
+          
+          // Inner chest
+          minimapCtx.globalAlpha = 1;
+          minimapCtx.fillRect(chestMinimapX - pulseSize/2, chestMinimapY - pulseSize/2, pulseSize, pulseSize);
+      }
+      
       // Draw player
       const playerMinimapX = ((playerX / worldSize) + 0.5) * 150;
       const playerMinimapY = ((playerZ / worldSize) + 0.5) * 150;
@@ -2557,7 +5268,97 @@
     // INVENTORY ACTIONS
     // ============================================
     
-    woodItem.addEventListener('click', () => {
+    // Helper function to update hunger bar appearance
+    function updateHungerBarAppearance() {
+      hungerBar.classList.remove('low', 'critical');
+      hungerBarContainer.classList.remove('hunger-starving');
+      if (playerHunger <= 0) {
+        hungerBar.classList.add('critical');
+        hungerBarContainer.classList.add('hunger-starving');
+      } else if (playerHunger < 25) {
+        hungerBar.classList.add('low');
+      }
+    }
+    
+    // Helper function to update inventory display counts
+    function updateInventoryDisplay() {
+      // Food items - always visible
+      carrotCount.textContent = carrots;
+      stewCount.textContent = stew;
+    }
+    
+    // Update weapons display based on rewards state
+    function updateWeaponsDisplay() {
+      const axeName = document.getElementById('axeName');
+      const spearItem = document.getElementById('spearItem');
+      
+      // Update axe display based on upgrades
+      if (rewardsState.weapons.hasChainsaw) {
+        axeName.textContent = "⛓️ Chainsaw";
+        axeItem.querySelector('.inv-dropdown-icon').textContent = "⛓️";
+      } else if (rewardsState.weapons.hasGoodAxe) {
+        axeName.textContent = "Good Axe";
+        axeItem.querySelector('.inv-dropdown-icon').textContent = "🪓";
+      } else {
+        axeName.textContent = "Old Axe";
+      }
+      
+      // Show/hide spear
+      if (rewardsState.weapons.hasSpear) {
+        spearItem.style.display = 'flex';
+      } else {
+        spearItem.style.display = 'none';
+      }
+    }
+    
+    // Carrots: Restore 3% hunger
+    carrotItem.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (carrots > 0) {
+        carrots--;
+        carrotCount.textContent = carrots;
+        playerHunger = Math.min(100, playerHunger + 3);
+        hungerBar.style.width = `${playerHunger}%`;
+        updateHungerBarAppearance();
+        updateInventoryDisplay();
+        carrotItem.classList.add('pulse');
+        setTimeout(() => carrotItem.classList.remove('pulse'), 300);
+      }
+    });
+    
+    // Meat: Restore 10% hunger
+    meatItem.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const currentMeat = parseInt(meatCount.textContent, 10);
+      if (currentMeat > 0) {
+        meatCount.textContent = currentMeat - 1;
+        playerHunger = Math.min(100, playerHunger + 10);
+        hungerBar.style.width = `${playerHunger}%`;
+        updateHungerBarAppearance();
+        updateInventoryDisplay();
+        meatItem.classList.add('pulse');
+        setTimeout(() => meatItem.classList.remove('pulse'), 300);
+      }
+    });
+    
+    // Stew: Restore 30% hunger
+    stewItem.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (stew > 0) {
+        stew--;
+        stewCount.textContent = stew;
+        playerHunger = Math.min(100, playerHunger + 30);
+        hungerBar.style.width = `${playerHunger}%`;
+        updateHungerBarAppearance();
+        updateInventoryDisplay();
+        stewItem.classList.add('pulse');
+        setTimeout(() => stewItem.classList.remove('pulse'), 300);
+      }
+    });
+    
+    // Wood: Add to fire if near campfire
+    woodItem.addEventListener('click', (e) => {
+      e.stopPropagation();
       const currentWood = parseInt(woodCount.textContent, 10);
       if (currentWood > 0 && isNearCampfire) {
         woodCount.textContent = currentWood - 1;
@@ -2566,6 +5367,7 @@
         fireStrength = Math.min(100, fireStrength + woodValue);
         fireBar.style.width = `${fireStrength}%`;
         checkFireLevelUp();
+        updateInventoryDisplay();
         woodItem.classList.add('pulse');
         setTimeout(() => woodItem.classList.remove('pulse'), 300);
       } else if (currentWood > 0 && !isNearCampfire) {
@@ -2573,27 +5375,27 @@
       }
     });
     
-    meatItem.addEventListener('click', () => {
-      const currentMeat = parseInt(meatCount.textContent, 10);
-      if (currentMeat > 0) {
-        meatCount.textContent = currentMeat - 1;
-        playerHunger = Math.min(100, playerHunger + 10);
-        hungerBar.style.width = `${playerHunger}%`;
-        
-        // Update hunger bar appearance
-        hungerBar.classList.remove('low', 'critical');
-        if (playerHunger <= 0) {
-          hungerBar.classList.add('critical');
-        } else if (playerHunger < 25) {
-          hungerBar.classList.add('low');
-        }
-        
-        meatItem.classList.add('pulse');
-        setTimeout(() => meatItem.classList.remove('pulse'), 300);
-      }
+    // Metal: No action (crafting only)
+    metalItem.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // No action - for crafting only
     });
     
-    fuelItem.addEventListener('click', () => {
+    // Old Axe: No action yet
+    axeItem.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // No action - passive weapon upgrade
+    });
+    
+    // Spear: No action (passive upgrade)
+    spearItem.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // No action - passive weapon upgrade
+    });
+    
+    // Fuel: Add to fire if near campfire
+    fuelItem.addEventListener('click', (e) => {
+      e.stopPropagation();
       const currentFuel = parseInt(coalCount.textContent, 10);
       if (currentFuel > 0 && isNearCampfire) {
         coalCount.textContent = currentFuel - 1;
@@ -2602,6 +5404,7 @@
         fireStrength = Math.min(100, fireStrength + fuelValue);
         fireBar.style.width = `${fireStrength}%`;
         checkFireLevelUp();
+        updateInventoryDisplay();
         fuelItem.classList.add('pulse');
         setTimeout(() => fuelItem.classList.remove('pulse'), 300);
       } else if (currentFuel > 0 && !isNearCampfire) {
@@ -2609,6 +5412,544 @@
       }
     });
     
+
+    // ============================================
+    // CRAFTING SYSTEM
+    // ============================================
+    
+    const craftingRecipes = {
+      // Tier 1
+      map: { tier: 1, wood: 3, metal: 0, name: 'Map', icon: '🗺️', desc: 'Reveals the minimap' },
+      oldBed: { tier: 1, wood: 20, metal: 0, name: 'Old Bed', icon: '🛏️', desc: '+1 day per night' },
+      upgradeTier2: { tier: 1, wood: 5, metal: 1, name: 'Upgrade to Tier 2', icon: '⬆️', desc: 'Unlock better recipes', isUpgrade: true },
+      
+      // Tier 2
+      sunDial: { tier: 2, wood: 0, metal: 5, name: 'Sun Dial', icon: '☀️', desc: 'Shows day/night timer' },
+      regularBed: { tier: 2, wood: 0, metal: 5, name: 'Regular Bed', icon: '🛏️', desc: '+1 day per night' },
+      farmPlot: { tier: 2, wood: 10, metal: 0, name: 'Farm Plot', icon: '🌱', desc: 'Grow carrots', maxOwned: 10 },
+      // logWall: { tier: 2, wood: 12, metal: 0, name: 'Log Wall', icon: '🪵', desc: 'Block cultists', maxOwned: 8 }, // Hidden for now
+      // bearTrap: { tier: 2, wood: 0, metal: 3, name: 'Bear Trap', icon: '🪤', desc: 'Weaken cultists', maxOwned: 8 }, // Hidden for now
+      upgradeTier3: { tier: 2, wood: 15, metal: 15, name: 'Upgrade to Tier 3', icon: '⬆️', desc: 'Unlock final recipes', isUpgrade: true },
+      
+      // Tier 3
+      crockPot: { tier: 3, wood: 15, metal: 10, name: 'Crock Pot', icon: '🍲', desc: 'Cook stew for extra hunger' },
+      biofuelProcessor: { tier: 3, wood: 12, metal: 12, name: 'Biofuel Processor', icon: '🧪', desc: 'Convert to efficient fuel' },
+      goodBed: { tier: 3, wood: 10, metal: 10, name: 'Good Bed', icon: '🛏️', desc: '+1 day per night' }
+    };
+    
+    function canAfford(recipe) {
+      const currentWood = parseInt(woodCount.textContent, 10);
+      const currentMetal = parseInt(scrapCount.textContent, 10);
+      return currentWood >= recipe.wood && currentMetal >= recipe.metal;
+    }
+    
+    let craftingTooltipElement = null;
+    
+    function checkCraftingBenchProximity() {
+      if (!craftingBenchMesh) return false;
+      const dx = playerX - craftingBenchMesh.position.x;
+      const dz = playerZ - craftingBenchMesh.position.z;
+      const dist = Math.sqrt(dx * dx + dz * dz);
+      const isNear = dist < 3; // Interaction distance for crafting bench
+      
+      // Show tooltip when near (always, not just first time)
+      if (isNear && !isCraftingMenuOpen && !isDialogOpen) {
+        showCraftingTooltip();
+      } else if (!isNear || isCraftingMenuOpen || isDialogOpen) {
+        hideCraftingTooltip();
+      }
+      
+      return isNear;
+    }
+    
+    function showCraftingTooltip() {
+      if (craftingTooltipElement) return;
+      
+      craftingTooltipElement = document.createElement('div');
+      craftingTooltipElement.className = 'crafting-tooltip';
+      craftingTooltipElement.textContent = '⚒️ Press E to craft';
+      document.body.appendChild(craftingTooltipElement);
+    }
+    
+    function hideCraftingTooltip() {
+      if (craftingTooltipElement) {
+        craftingTooltipElement.remove();
+        craftingTooltipElement = null;
+      }
+    }
+    
+    function updateCraftingMenu() {
+      craftingItems.innerHTML = '';
+      
+      const currentWood = parseInt(woodCount.textContent, 10);
+      const currentMetal = parseInt(scrapCount.textContent, 10);
+      
+      // Update inventory display at top
+      craftingWoodCount.textContent = currentWood;
+      craftingMetalCount.textContent = currentMetal;
+      
+      Object.entries(craftingRecipes).forEach(([key, recipe]) => {
+        // Only show items for current tier or lower
+        if (recipe.tier > craftingTier) return;
+        
+        // Skip upgrade if already at that tier
+        if (key === 'upgradeTier2' && craftingTier >= 2) return;
+        if (key === 'upgradeTier3' && craftingTier >= 3) return;
+        
+        // Skip if already crafted unique items
+        if (key === 'map' && hasCraftedMap) return;
+        if (key === 'sunDial' && hasCraftedSunDial) return;
+        if (key === 'crockPot' && hasCraftedCrockPot) return;
+        if (key === 'biofuelProcessor' && hasCraftedBiofuelProcessor) return;
+        
+        // Skip if max owned reached for stackable items
+        if (key === 'farmPlot' && farmPlotsOwned >= 10) return;
+        if (key === 'logWall' && logWallsOwned >= 8) return;
+        if (key === 'bearTrap' && bearTrapsOwned >= 8) return;
+        if ((key === 'oldBed' || key === 'regularBed' || key === 'goodBed') && bedsOwned >= 3) return;
+        
+        const affordable = canAfford(recipe);
+        const itemDiv = document.createElement('div');
+        itemDiv.className = `crafting-item${affordable ? '' : ' disabled'}${recipe.isUpgrade ? ' upgrade' : ''}`;
+        itemDiv.dataset.recipe = key;
+        
+        // Build cost HTML
+        let costHtml = '';
+        if (recipe.wood > 0) {
+          const woodClass = currentWood >= recipe.wood ? '' : ' insufficient';
+          costHtml += `<div class="crafting-cost-item${woodClass}"><span class="crafting-cost-icon">🪵</span>${recipe.wood}</div>`;
+        }
+        if (recipe.metal > 0) {
+          const metalClass = currentMetal >= recipe.metal ? '' : ' insufficient';
+          costHtml += `<div class="crafting-cost-item${metalClass}"><span class="crafting-cost-icon">🔧</span>${recipe.metal}</div>`;
+        }
+        
+        // Add owned count for stackable items
+        let descText = recipe.desc;
+        if (recipe.maxOwned) {
+          let owned = 0;
+          if (key === 'farmPlot') owned = farmPlotsOwned;
+          if (key === 'logWall') owned = logWallsOwned;
+          if (key === 'bearTrap') owned = bearTrapsOwned;
+          descText += ` (${owned}/${recipe.maxOwned})`;
+        }
+        if (key === 'oldBed' || key === 'regularBed' || key === 'goodBed') {
+          descText += ` (${bedsOwned}/3 beds)`;
+        }
+        
+        itemDiv.innerHTML = `
+          <div class="crafting-item-left">
+            <div class="crafting-item-icon">${recipe.icon}</div>
+            <div class="crafting-item-info">
+              <div class="crafting-item-name">${recipe.name}</div>
+              <div class="crafting-item-desc">${descText}</div>
+            </div>
+          </div>
+          <div class="crafting-item-cost">${costHtml}</div>
+        `;
+        
+        if (affordable) {
+          itemDiv.addEventListener('click', () => startCraftingMathProblem(key));
+        }
+        
+        craftingItems.appendChild(itemDiv);
+      });
+    }
+    
+    function showCraftingMenu() {
+      if (isCraftingMenuOpen) return;
+      isCraftingMenuOpen = true;
+      updateCraftingMenu();
+      craftingMenu.classList.add('active');
+      hideCraftingTooltip();
+    }
+    
+    function hideCraftingMenu() {
+      isCraftingMenuOpen = false;
+      craftingMenu.classList.remove('active');
+    }
+    
+    function startCraftingMathProblem(itemKey) {
+      const recipe = craftingRecipes[itemKey];
+      if (!recipe || !canAfford(recipe)) return;
+      
+      pendingCraftItem = itemKey;
+      hideCraftingMenu();
+      
+      const currentWood = parseInt(woodCount.textContent, 10);
+      const currentMetal = parseInt(scrapCount.textContent, 10);
+      
+      // Create math question based on resource cost
+      let question, answer;
+      
+      if (recipe.wood > 0 && recipe.metal > 0) {
+        // Both resources needed - ask about wood
+        question = `You have ${currentWood} wood and need ${recipe.wood} to craft ${recipe.name}. How much wood will you have left?`;
+        answer = currentWood - recipe.wood;
+      } else if (recipe.wood > 0) {
+        // Only wood needed
+        question = `You have ${currentWood} wood and need ${recipe.wood} to craft ${recipe.name}. How much wood will you have left?`;
+        answer = currentWood - recipe.wood;
+      } else if (recipe.metal > 0) {
+        // Only metal needed
+        question = `You have ${currentMetal} metal and need ${recipe.metal} to craft ${recipe.name}. How much metal will you have left?`;
+        answer = currentMetal - recipe.metal;
+      } else {
+        // No cost (shouldn't happen, but just in case)
+        craftItem(itemKey);
+        return;
+      }
+      
+      currentAction = 'craftingMath';
+      isDialogOpen = true;
+      currentQuestions = [{ equation: question, answer: answer }];
+      currentQuestionIndex = 0;
+      questionsCorrectFirstTry = [];
+      currentQuestionAttempts = 0;
+      
+      mathBubbleLabel.textContent = `⚒️ Craft ${recipe.name}`;
+      mathQuestionCounter.textContent = '';
+      mathTimerBar.style.display = 'none';
+      mathQuestion.textContent = question;
+      mathBubbleFeedback.textContent = '';
+      mathAnswerInput.value = '';
+      mathBubble.classList.add('active');
+      mathAnswerInput.focus();
+    }
+    
+    function craftItem(itemKey) {
+      const recipe = craftingRecipes[itemKey];
+      if (!recipe || !canAfford(recipe)) return;
+      
+      // Deduct resources
+      const currentWood = parseInt(woodCount.textContent, 10);
+      const currentMetal = parseInt(scrapCount.textContent, 10);
+      woodCount.textContent = currentWood - recipe.wood;
+      scrapCount.textContent = currentMetal - recipe.metal;
+      
+      // Handle each item type
+      switch (itemKey) {
+        case 'map':
+          hasCraftedMap = true;
+          minimapSection.style.display = 'block';
+          showCraftNotification('🗺️ Map crafted! Minimap unlocked.');
+          break;
+          
+        case 'sunDial':
+          hasCraftedSunDial = true;
+          cycleSection.style.visibility = 'visible';
+          showCraftNotification('☀️ Sun Dial crafted! Timer unlocked.');
+          break;
+          
+        case 'oldBed':
+        case 'regularBed':
+        case 'goodBed':
+          if (bedsOwned < 3 && bedMeshes[bedsOwned]) {
+            bedMeshes[bedsOwned].visible = true;
+            bedsOwned++;
+            showCraftNotification(`🛏️ Bed crafted! +${bedsOwned} days per night.`);
+          }
+          break;
+          
+        case 'farmPlot':
+          if (farmPlotsOwned < 10) {
+            farmPlotsOwned++;
+            // Show the farm plot mesh (all farm plots share one visual)
+            if (farmPlotMeshes[0]) {
+              farmPlotMeshes[0].visible = true;
+              // Start with no carrots visible (need to wait 2 days)
+              if (farmPlotsOwned === 1) {
+                farmPlotDaysUntilHarvest = 2; // Reset timer when first plot is planted
+              }
+              updateFarmPlotVisuals();
+            }
+            showCraftNotification(`🌱 Farm plot planted! Harvest in ${farmPlotDaysUntilHarvest} days (${farmPlotsOwned}x multiplier)`);
+          }
+          break;
+          
+        case 'logWall':
+          if (logWallsOwned < logWallMeshes.length) {
+            logWallMeshes[logWallsOwned].visible = true;
+            logWallsOwned++;
+            // Update active wall segments for cultist pathfinding
+            if (logWallsOwned <= wallBuildOrder.length) {
+              activeWallSegments.add(wallBuildOrder[logWallsOwned - 1]);
+            }
+            updateLogWallSegments();
+            showCraftNotification(`🪵 Log wall crafted! (${logWallsOwned}/8)`);
+          }
+          break;
+          
+        case 'bearTrap':
+          if (bearTrapsOwned < 8 && bearTrapMeshes[bearTrapsOwned]) {
+            bearTrapMeshes[bearTrapsOwned].visible = true;
+            bearTrapsOwned++;
+            showCraftNotification(`🪤 Bear trap crafted! (${bearTrapsOwned}/8)`);
+          }
+          break;
+          
+        case 'crockPot':
+          hasCraftedCrockPot = true;
+          if (crockPotMesh) {
+            crockPotMesh.visible = true;
+          }
+          showCraftNotification('🍲 Crock Pot crafted! Stand on it to cook stew.');
+          break;
+          
+        case 'biofuelProcessor':
+          hasCraftedBiofuelProcessor = true;
+          if (biofuelProcessorMesh) {
+            biofuelProcessorMesh.visible = true;
+          }
+          showCraftNotification('🧪 Biofuel Processor crafted! Stand on it to process biofuel.');
+          break;
+          
+        case 'upgradeTier2':
+          craftingTier = 2;
+          showCraftNotification('⬆️ Upgraded to Tier 2! New recipes unlocked.');
+          break;
+          
+        case 'upgradeTier3':
+          craftingTier = 3;
+          showCraftNotification('⬆️ Upgraded to Tier 3! Final recipes unlocked.');
+          break;
+      }
+      
+      // Update displays
+      updateCraftingMenu();
+      updateInventoryDisplay();
+    }
+    
+    function showCraftNotification(message) {
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 20%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        color: white;
+        padding: 16px 30px;
+        border-radius: 12px;
+        font-size: 18px;
+        font-weight: 600;
+        z-index: 1000;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+        border: 2px solid #fff;
+        text-align: center;
+      `;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.remove();
+      }, 2500);
+    }
+    
+    // ============================================
+    // STRUCTURE INTERACTIONS
+    // ============================================
+    
+    function checkBiofuelProcessorProximity() {
+      if (!biofuelProcessorMesh || !hasCraftedBiofuelProcessor) {
+        isNearBiofuelProcessor = false;
+        hideBiofuelTooltip();
+        return;
+      }
+      
+      const dx = playerX - biofuelProcessorMesh.position.x;
+      const dz = playerZ - biofuelProcessorMesh.position.z;
+      const dist = Math.sqrt(dx * dx + dz * dz);
+      
+      isNearBiofuelProcessor = dist < 2.5;
+      
+      // Show tooltip when near
+      const currentMeat = parseInt(meatCount.textContent, 10);
+      const currentWood = parseInt(woodCount.textContent, 10);
+      
+      if (isNearBiofuelProcessor && !isDialogOpen && !isCraftingMenuOpen) {
+        if (currentMeat >= 1 && currentWood >= 1) {
+          showBiofuelTooltip('🧪 Press E to make biofuel');
+        } else {
+          showBiofuelTooltip('🧪 Need 1 meat + 1 wood');
+        }
+      } else {
+        hideBiofuelTooltip();
+      }
+    }
+    
+    function showBiofuelTooltip(text) {
+      if (biofuelTooltipElement) {
+        biofuelTooltipElement.textContent = text;
+        return;
+      }
+      
+      biofuelTooltipElement = document.createElement('div');
+      biofuelTooltipElement.className = 'crafting-tooltip';
+      biofuelTooltipElement.textContent = text;
+      document.body.appendChild(biofuelTooltipElement);
+    }
+    
+    function hideBiofuelTooltip() {
+      if (biofuelTooltipElement) {
+        biofuelTooltipElement.remove();
+        biofuelTooltipElement = null;
+      }
+    }
+    
+    function checkCrockPotProximity() {
+      if (!crockPotMesh || !hasCraftedCrockPot) {
+        isNearCrockPot = false;
+        hideCrockPotTooltip();
+        return;
+      }
+      
+      const dx = playerX - crockPotMesh.position.x;
+      const dz = playerZ - crockPotMesh.position.z;
+      const dist = Math.sqrt(dx * dx + dz * dz);
+      
+      isNearCrockPot = dist < 2.5;
+      
+      // Show tooltip when near (and have enough food)
+      const totalFood = carrots + parseInt(meatCount.textContent, 10);
+      if (isNearCrockPot && !isDialogOpen && !isCraftingMenuOpen) {
+        if (totalFood >= 3) {
+          showCrockPotTooltip('🍲 Press E to make stew');
+        } else {
+          showCrockPotTooltip('🍲 Need 3 food to make stew');
+        }
+      } else {
+        hideCrockPotTooltip();
+      }
+    }
+    
+    function showCrockPotTooltip(text) {
+      if (crockPotTooltipElement) {
+        crockPotTooltipElement.textContent = text;
+        return;
+      }
+      
+      crockPotTooltipElement = document.createElement('div');
+      crockPotTooltipElement.className = 'crafting-tooltip';
+      crockPotTooltipElement.textContent = text;
+      document.body.appendChild(crockPotTooltipElement);
+    }
+    
+    function hideCrockPotTooltip() {
+      if (crockPotTooltipElement) {
+        crockPotTooltipElement.remove();
+        crockPotTooltipElement = null;
+      }
+    }
+    
+    function checkFarmPlotReady() {
+      return farmPlotsOwned > 0 && farmPlotDaysUntilHarvest <= 0;
+    }
+    
+    // Update farm plot visual - show/hide carrots based on harvest ready state
+    function updateFarmPlotVisuals() {
+      const farmPlot = farmPlotMeshes[0];
+      if (farmPlot && farmPlot.userData.carrotsGroup) {
+        farmPlot.userData.carrotsGroup.visible = checkFarmPlotReady();
+      }
+    }
+    
+    function showFarmHarvestDialog() {
+      const totalCarrots = farmPlotsOwned * 6;
+      currentAction = 'harvestFarm';
+      isDialogOpen = true;
+      currentQuestions = [{
+        equation: `You have ${farmPlotsOwned} farm plots. Each grows 6 carrots. How many carrots total?`,
+        answer: totalCarrots
+      }];
+      currentQuestionIndex = 0;
+      questionsCorrectFirstTry = [];
+      currentQuestionAttempts = 0;
+      
+      mathBubbleLabel.textContent = '🌱 Harvest Time!';
+      mathQuestionCounter.textContent = '';
+      mathTimerBar.style.display = 'none';
+      mathQuestion.textContent = currentQuestions[0].equation;
+      mathBubbleFeedback.textContent = '';
+      mathAnswerInput.value = '';
+      mathBubble.classList.add('active');
+      mathAnswerInput.focus();
+    }
+    
+    function showCrockPotDialog() {
+      const currentMeat = parseInt(meatCount.textContent, 10);
+      const totalFood = carrots + currentMeat;
+      
+      if (totalFood < 3) {
+        return; // Tooltip already shows "need 3 food"
+      }
+      
+      hideCrockPotTooltip();
+      
+      // Figure out what will be used (carrots first, then meat)
+      let carrotsToUse = Math.min(carrots, 3);
+      let meatToUse = 3 - carrotsToUse;
+      
+      // Create appropriate math question
+      let question, answer;
+      
+      if (carrotsToUse > 0 && carrotsToUse <= carrots) {
+        // We're using some carrots
+        question = `You have ${carrots} carrots. Using ${carrotsToUse} for stew. How many carrots left?`;
+        answer = carrots - carrotsToUse;
+      } else {
+        // Using all carrots and some meat
+        question = `You have ${currentMeat} meat. Using ${meatToUse} for stew. How much meat left?`;
+        answer = currentMeat - meatToUse;
+      }
+      
+      currentAction = 'cookStew';
+      isDialogOpen = true;
+      currentQuestions = [{ equation: question, answer: answer }];
+      currentQuestionIndex = 0;
+      questionsCorrectFirstTry = [];
+      currentQuestionAttempts = 0;
+      
+      mathBubbleLabel.textContent = '🍲 Make Stew';
+      mathQuestionCounter.textContent = '';
+      mathTimerBar.style.display = 'none';
+      mathQuestion.textContent = question;
+      mathBubbleFeedback.textContent = '';
+      mathAnswerInput.value = '';
+      mathBubble.classList.add('active');
+      // Clear and focus with small delay to prevent 'e' key from being captured
+      setTimeout(() => {
+        mathAnswerInput.value = '';
+        mathAnswerInput.focus();
+      }, 50);
+    }
+    
+    function processBiofuelInstant() {
+      const currentMeat = parseInt(meatCount.textContent, 10);
+      const currentWood = parseInt(woodCount.textContent, 10);
+      
+      if (currentMeat < 1 || currentWood < 1) {
+        return;
+      }
+      
+      hideBiofuelTooltip();
+      
+      // Deduct resources
+      meatCount.textContent = currentMeat - 1;
+      woodCount.textContent = currentWood - 1;
+      
+      // Add biofuel directly to fire
+      const biofuelValue = currentFireLevel === 1 ? 17 : 6;
+      fireStrength = Math.min(100, fireStrength + biofuelValue);
+      fireBar.style.width = `${fireStrength}%`;
+      checkFireLevelUp();
+      
+      // Show notification
+      showCraftNotification(`🧪 Biofuel processed! +${biofuelValue}% fire`);
+      
+      updateInventoryDisplay();
+    }
+
     // ============================================
     // INPUT HANDLERS
     // ============================================
@@ -2650,7 +5991,16 @@
       history.pushState(null, null, location.href);
     });
     
+    // Track last submit time to prevent rapid-fire submissions
+    let lastSubmitTime = 0;
+    const SUBMIT_COOLDOWN = 500; // 500ms cooldown between submissions
+    
     window.addEventListener('keydown', (e) => {
+      // Always allow browser refresh (Ctrl+R / Cmd+R)
+      if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+        return; // Let the browser handle it
+      }
+      
       if (isPaused) return; // Ignore all key presses when paused
       
       if (isDialogOpen) {
@@ -2661,9 +6011,37 @@
           }
         }
         if (e.key === 'Enter') {
-          handleSubmit();
+          // Debounce to prevent mashing
+          const now = Date.now();
+          if (now - lastSubmitTime >= SUBMIT_COOLDOWN) {
+            lastSubmitTime = now;
+            handleSubmit();
+          }
         }
         return;
+      }
+      
+      // Handle E key for crafting menu, crock pot, and biofuel processor
+      if (e.key === 'e' || e.key === 'E') {
+        if (isCraftingMenuOpen) {
+          hideCraftingMenu();
+          hideCraftingTooltip();
+        } else if (checkCraftingBenchProximity()) {
+          showCraftingMenu();
+          hideCraftingTooltip();
+        } else if (isNearCrockPot && hasCraftedCrockPot) {
+          const totalFood = carrots + parseInt(meatCount.textContent, 10);
+          if (totalFood >= 3) {
+            showCrockPotDialog();
+          }
+        } else if (isNearBiofuelProcessor && hasCraftedBiofuelProcessor) {
+          const currentMeat = parseInt(meatCount.textContent, 10);
+          const currentWood = parseInt(woodCount.textContent, 10);
+          if (currentMeat >= 1 && currentWood >= 1) {
+            // Process biofuel instantly (no math required)
+            processBiofuelInstant();
+          }
+        }
       }
       
       if (e.key in keys) {
@@ -2679,13 +6057,58 @@
       }
     });
     
-    mathSubmitButton.addEventListener('click', handleSubmit);
+    mathSubmitButton.addEventListener('click', () => {
+      // Debounce to prevent mashing
+      const now = Date.now();
+      if (now - lastSubmitTime >= SUBMIT_COOLDOWN) {
+        lastSubmitTime = now;
+        handleSubmit();
+      }
+    });
     
     mathAnswerInput.addEventListener('blur', () => {
       if (isDialogOpen) {
         setTimeout(() => mathAnswerInput.focus(), 10);
       }
     });
+    
+    // Only allow numbers, backspace, delete, arrows, tab, and enter in math input
+    mathAnswerInput.addEventListener('keydown', (e) => {
+      const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Enter', '-'];
+      const isNumber = /^[0-9]$/.test(e.key);
+      if (!isNumber && !allowedKeys.includes(e.key)) {
+        e.preventDefault();
+      }
+    });
+    
+    // Crafting menu close button
+    craftingCloseBtn.addEventListener('click', () => {
+      hideCraftingMenu();
+    });
+    
+    // Game canvas click handler (reserved for future interactions)
+    const gameCanvas = document.getElementById('gameCanvas');
+    gameCanvas.addEventListener('click', () => {
+      if (isPaused || isDialogOpen) return;
+      // Currently no click interactions - all structures use E key
+    });
+    
+    // Farm plot proximity check - triggers harvest dialog automatically
+    function checkFarmPlotProximity() {
+      if (!checkFarmPlotReady() || isDialogOpen) return;
+      
+      const farmPlot = farmPlotMeshes[0];
+      if (!farmPlot || !farmPlot.visible) return;
+      
+      const dx = playerX - farmPlot.position.x;
+      const dz = playerZ - farmPlot.position.z;
+      const dist = Math.sqrt(dx * dx + dz * dz);
+      
+      // Trigger harvest dialog when walking near ready farm plot
+      if (dist < 3) {
+        showFarmHarvestDialog();
+      }
+    }
     
     // Pause/Play functionality
     pauseButton.addEventListener('click', () => {
@@ -2713,11 +6136,40 @@
     // GAME LOOP
     // ============================================
     
+    // Helper function to check wall collision
+    function isPositionBlockedByWall(x, z) {
+      const fenceRadius = 14.5;
+      const fenceThickness = 2; // Thick enough to catch corner gaps
+      const distFromCenter = Math.sqrt(x * x + z * z);
+      
+      // Check if position is in the fence zone (the thick ring around the fence)
+      if (distFromCenter >= fenceRadius - fenceThickness && distFromCenter <= fenceRadius + fenceThickness) {
+        // Calculate angle
+        let angle = Math.atan2(z, x);
+        if (angle < 0) angle += Math.PI * 2;
+        
+        // Check which segment this angle falls into
+        const segmentAngle = Math.PI / 4; // Each segment spans π/4 radians (45 degrees)
+        const segmentIndex = Math.floor((angle + segmentAngle / 2) / segmentAngle) % 8;
+        
+        // Segment 2 is always the entrance (never blocked)
+        if (segmentIndex === 2) return false;
+        
+        // Block only if this segment has a wall built
+        if (activeWallSegments.has(segmentIndex)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    
     function updatePlayer() {
       if (isPaused) return; // Don't update if paused
       
       if (!isDialogOpen) {
         let moved = false;
+        const oldX = playerX;
+        const oldZ = playerZ;
         
         if (keys.w || keys.ArrowUp) {
           playerZ -= playerSpeed;
@@ -2736,6 +6188,12 @@
           moved = true;
         }
         
+        // Check wall collision - revert if blocked
+        if (moved && isPositionBlockedByWall(playerX, playerZ)) {
+          playerX = oldX;
+          playerZ = oldZ;
+        }
+        
         // Clamp player to world boundaries
         const maxCoord = worldSize / 2 - 2;
         playerX = Math.max(-maxCoord, Math.min(maxCoord, playerX));
@@ -2743,9 +6201,13 @@
         
         if (moved) {
           checkProximity();
+          checkCraftingBenchProximity(); // Check for crafting tooltip
+          checkFarmPlotProximity(); // Check for harvest
+          checkCrockPotProximity(); // Check for crock pot tooltip
+          checkBiofuelProcessorProximity(); // Check for biofuel tooltip
         }
       }
-      
+
       // Update player mesh position
       if (playerMesh) {
         playerMesh.position.x = playerX;
@@ -2770,6 +6232,116 @@
     }
     
     // ============================================
+    // CAMP STRUCTURES SETUP
+    // ============================================
+    
+    function createCampStructures() {
+      // Position #1: Crafting Bench (12 o'clock, inside circle) - ALWAYS VISIBLE
+      craftingBenchMesh = createCraftingBench(0, -6);
+      scene.add(craftingBenchMesh);
+      
+      // Position #2: Saplings (top, just outside circle) - 3 trees (hidden for now)
+      saplingMeshes.push(createSapling(-2, -9));
+      saplingMeshes.push(createSapling(0, -9.5));
+      saplingMeshes.push(createSapling(2, -9));
+      saplingMeshes.forEach(sapling => {
+        scene.add(sapling);
+        sapling.visible = false; // Hidden for now
+      });
+      
+      // Position #3: Beds (west side, outside circle) - 3 beds with different colors
+      // Rotated 90 degrees counter-clockwise, feet facing the fire, with gaps between
+      const bed1 = createBed(-10, -3, 'cyan');
+      bed1.rotation.y = Math.PI / 2; // 90 degrees counter-clockwise
+      bedMeshes.push(bed1);
+      
+      const bed2 = createBed(-10, 0, 'brown');
+      bed2.rotation.y = Math.PI / 2;
+      bedMeshes.push(bed2);
+      
+      const bed3 = createBed(-10, 3, 'green');
+      bed3.rotation.y = Math.PI / 2;
+      bedMeshes.push(bed3);
+      
+      bedMeshes.forEach(bed => scene.add(bed));
+      
+      // Position #4: Farm Plots (east side, outside circle) - 10 plots stacked in one location
+      // Just one visual plot that represents all stacked plots
+      // Farm plot at 3 o'clock position, below the midpoint
+      const farmPlot = createFarmPlot(10, 3);
+      farmPlot.scale.set(1, 1, 1.5); // Make it 3x as long
+      farmPlotMeshes.push(farmPlot);
+      farmPlotMeshes.forEach(plot => scene.add(plot));
+      
+      // Position #5: Crock Pot (above farm plot with a small gap)
+      // Positioned closer to farm plot
+      crockPotMesh = createCrockPot(10, -1);
+      scene.add(crockPotMesh);
+      
+      // Position #6: Biofuel Processor (between 4-5 o'clock, a bit further from fire)
+      // 4:30 position: angle = 135 degrees (3π/4 radians)
+      const biofuelAngle = (4.5 / 12) * Math.PI * 2 - Math.PI / 2; // Convert clock to radians
+      const biofuelRadius = 4;
+      biofuelProcessorMesh = createBiofuelProcessor(
+        Math.cos(biofuelAngle) * biofuelRadius,
+        Math.sin(biofuelAngle) * biofuelRadius
+      );
+      scene.add(biofuelProcessorMesh);
+      
+      // Position #7: Log Walls (outer perimeter) - 8 segments forming octagon
+      // Create octagon around the camp (large enough to surround everything including trees)
+      const wallSegments = 8; // Octagon has 8 sides
+      const wallWidth = 12; // Total width of each wall segment (25 logs * 0.5 spacing = 12 units)
+      // For octagon: radius = sideLength / (2 * tan(π/8))
+      const wallRadius = wallWidth / (2 * Math.tan(Math.PI / 8));
+      
+      // Create all 7 wall segments (8th is always entrance) but hide them initially
+      activeWallSegments.clear();
+      for (let buildIndex = 0; buildIndex < wallBuildOrder.length; buildIndex++) {
+        const i = wallBuildOrder[buildIndex];
+        
+        const angle = (i / wallSegments) * Math.PI * 2;
+        const x = Math.cos(angle) * wallRadius;
+        const z = Math.sin(angle) * wallRadius;
+        
+        // Rotate wall so each segment is tangent to the circle (forms octagon)
+        const rotation = -(angle + Math.PI / 2);
+        
+        const wall = createLogWallSegment(x, z, rotation);
+        logWallMeshes.push(wall);
+        scene.add(wall);
+      }
+      updateLogWallSegments();
+      
+      // Position #8: Bear Traps - 8 traps in 2 rows of 4 in the fence opening
+      // Place them at the fence opening (bottom, around wallRadius)
+      const trapStartZ = wallRadius - 1; // Just inside the fence opening
+      const trapSpacing = 3; // Wider spacing to fill the opening
+      
+      // First row of 4 traps
+      for (let i = 0; i < 4; i++) {
+        const x = -4.5 + (i * trapSpacing);
+        bearTrapMeshes.push(createBearTrap(x, trapStartZ));
+      }
+      
+      // Second row of 4 traps (slightly further out)
+      for (let i = 0; i < 4; i++) {
+        const x = -4.5 + (i * trapSpacing);
+        bearTrapMeshes.push(createBearTrap(x, trapStartZ + 2));
+      }
+      
+      bearTrapMeshes.forEach(trap => scene.add(trap));
+      
+      // Hide all structures except crafting bench initially
+      bedMeshes.forEach(bed => bed.visible = false);
+      farmPlotMeshes.forEach(plot => plot.visible = false);
+      crockPotMesh.visible = false;
+      biofuelProcessorMesh.visible = false;
+      logWallMeshes.forEach(wall => wall.visible = false);
+      bearTrapMeshes.forEach(trap => trap.visible = false);
+    }
+    
+    // ============================================
     // INITIALIZATION
     // ============================================
     
@@ -2781,6 +6353,9 @@
       // Create campfire at origin
       campfireMesh = createCampfire(0, 0);
       scene.add(campfireMesh);
+      
+      // Create all camp structures
+      createCampStructures();
       
       // Create player
       playerMesh = createPlayer(playerX, playerZ);
@@ -2804,6 +6379,9 @@
       
       // Initial minimap
       updateMinimap();
+      
+      // Initialize rewards display (all items start as unearned)
+      updateRewardsDisplay();
       
       // Start animation loop
       animate();
