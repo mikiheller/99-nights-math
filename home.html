@@ -145,13 +145,6 @@
       white-space: nowrap;
     }
     
-    .day-diamonds {
-      font-size: 16px;
-      color: var(--text-muted);
-      margin-top: 4px;
-      letter-spacing: 0.05em;
-    }
-    
     .cycle-section {
       flex: 1;
       display: flex;
@@ -174,7 +167,7 @@
     /* Inventory Grid - Category System */
     .inventory-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 10px;
     }
 
@@ -301,6 +294,85 @@
       font-size: 14px;
       font-weight: 700;
       color: var(--accent-fire-soft);
+    }
+    
+    /* Rewards dropdown specific styles */
+    .inv-dropdown-section {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent-fire);
+      padding: 8px 12px 4px 12px;
+      border-bottom: 1px solid var(--border-soft);
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+    
+    .inv-dropdown-section:not(:first-child) {
+      margin-top: 8px;
+    }
+    
+    .reward-item.unearned {
+      opacity: 0.4;
+    }
+    
+    .reward-item.earned {
+      background: rgba(124, 217, 146, 0.1);
+    }
+    
+    .reward-item.earned .inv-dropdown-name::after {
+      content: ' ✓';
+      color: var(--accent-ok);
+    }
+    
+    #rewardsDropdown {
+      min-width: 200px;
+      max-height: 400px;
+      overflow-y: auto;
+      /* Align to right edge instead of center to prevent cutoff */
+      left: auto;
+      right: 0;
+      transform: none;
+    }
+    
+    #rewardsDropdown::after {
+      /* Move arrow to right side */
+      left: auto;
+      right: 20px;
+      transform: none;
+    }
+    
+    .chest-keys {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    
+    /* Diamond flying animation */
+    .flying-diamond {
+      position: fixed;
+      font-size: 48px;
+      z-index: 10000;
+      pointer-events: none;
+      filter: drop-shadow(0 0 10px rgba(100, 200, 255, 0.8));
+    }
+    
+    @keyframes diamondPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+    
+    .diamond-burst {
+      position: fixed;
+      font-size: 64px;
+      z-index: 10000;
+      pointer-events: none;
+      animation: diamondBurst 0.5s ease-out forwards;
+    }
+    
+    @keyframes diamondBurst {
+      0% { transform: scale(0.5); opacity: 0; }
+      50% { transform: scale(1.5); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
     }
 
     /* Legacy classes for compatibility */
@@ -876,7 +948,6 @@
       <div class="info-section day-time-row">
         <div class="day-section">
           <div class="day-counter">Day <span id="dayCounter">1</span></div>
-          <div class="day-diamonds" id="dayDiamonds">0 💎</div>
         </div>
         <div class="cycle-section" id="cycleSection" style="visibility: hidden;">
           <div class="cycle-icon" id="cycleIcon">☀️</div>
@@ -942,7 +1013,7 @@
                   <span class="inv-dropdown-icon">⛽</span>
                   <span class="inv-dropdown-name">Fuel</span>
                 </div>
-                <span class="inv-dropdown-count" id="coalCount">0</span>
+                <span class="inv-dropdown-count" id="coalCount">30</span>
               </div>
             </div>
           </div>
@@ -955,8 +1026,129 @@
               <div class="inv-dropdown-item" id="axeItem" data-item="axe">
                 <div class="inv-dropdown-left">
                   <span class="inv-dropdown-icon">🪓</span>
-                  <span class="inv-dropdown-name">Old Axe</span>
+                  <span class="inv-dropdown-name" id="axeName">Old Axe</span>
                 </div>
+              </div>
+              <div class="inv-dropdown-item" id="spearItem" data-item="spear" style="display: none;">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">🔱</span>
+                  <span class="inv-dropdown-name">Spear</span>
+                </div>
+                <span class="inv-dropdown-desc" style="font-size: 10px; color: #888;">2-shot wolves</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- REWARDS Category -->
+          <div class="inv-category" id="rewardsCategory">
+            <div class="inv-category-icon">💎</div>
+            <div class="inv-category-label">Rewards <span id="rewardsDiamondCount">0</span></div>
+            <div class="inv-dropdown" id="rewardsDropdown">
+              <!-- Rare Items Section -->
+              <div class="inv-dropdown-section">Rare Items</div>
+              <div class="inv-dropdown-item reward-item" id="lanternbarkReward" data-reward="lanternbark">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">🌳</span>
+                  <span class="inv-dropdown-name">Lanternbark Tree</span>
+                </div>
+                <span class="inv-dropdown-count">+1💎</span>
+              </div>
+              <div class="inv-dropdown-item reward-item" id="silverWolfReward" data-reward="silverWolf">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">🐺</span>
+                  <span class="inv-dropdown-name">Silver-Gleam Wolf</span>
+                </div>
+                <span class="inv-dropdown-count">+1💎</span>
+              </div>
+              <div class="inv-dropdown-item reward-item" id="whisperingFanReward" data-reward="whisperingFan">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">🌀</span>
+                  <span class="inv-dropdown-name">Whispering Fan Blade</span>
+                </div>
+                <span class="inv-dropdown-count">+1💎</span>
+              </div>
+              <div class="inv-dropdown-item reward-item" id="frostCanisterReward" data-reward="frostCanister">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">🧊</span>
+                  <span class="inv-dropdown-name">Frost-Locked Canister</span>
+                </div>
+                <span class="inv-dropdown-count">+1💎</span>
+              </div>
+              
+              <!-- Chests Section -->
+              <div class="inv-dropdown-section">Chests</div>
+              <div class="inv-dropdown-item reward-item" id="woodenChestReward" data-reward="woodenChest">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">📦</span>
+                  <span class="inv-dropdown-name">Wooden Chest</span>
+                </div>
+                <span class="inv-dropdown-count chest-keys" id="woodenChestKeys">🔑×0/3</span>
+              </div>
+              <div class="inv-dropdown-item reward-item" id="goldenChestReward" data-reward="goldenChest">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">📦</span>
+                  <span class="inv-dropdown-name">Golden Chest</span>
+                </div>
+                <span class="inv-dropdown-count chest-keys" id="goldenChestKeys">🔑×0/4</span>
+              </div>
+              <div class="inv-dropdown-item reward-item" id="rubyChestReward" data-reward="rubyChest">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">📦</span>
+                  <span class="inv-dropdown-name">Ruby Chest</span>
+                </div>
+                <span class="inv-dropdown-count chest-keys" id="rubyChestKeys">🔑×0/5</span>
+              </div>
+              <div class="inv-dropdown-item reward-item" id="diamondChestReward" data-reward="diamondChest">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">📦</span>
+                  <span class="inv-dropdown-name">Diamond Chest</span>
+                </div>
+                <span class="inv-dropdown-count chest-keys" id="diamondChestKeys">🔑×0/6</span>
+              </div>
+              <div class="inv-dropdown-item reward-item" id="obsidianChestReward" data-reward="obsidianChest">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">📦</span>
+                  <span class="inv-dropdown-name">Obsidian Chest</span>
+                </div>
+                <span class="inv-dropdown-count chest-keys" id="obsidianChestKeys">🔑×0/7</span>
+              </div>
+              
+              <!-- Milestones Section -->
+              <div class="inv-dropdown-section">Milestones</div>
+              <div class="inv-dropdown-item reward-item" id="day10Reward" data-reward="day10">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">🏁</span>
+                  <span class="inv-dropdown-name">Reach Day 10</span>
+                </div>
+                <span class="inv-dropdown-count">+1💎</span>
+              </div>
+              <div class="inv-dropdown-item reward-item" id="day20Reward" data-reward="day20">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">🏁</span>
+                  <span class="inv-dropdown-name">Reach Day 20</span>
+                </div>
+                <span class="inv-dropdown-count">+2💎</span>
+              </div>
+              <div class="inv-dropdown-item reward-item" id="day40Reward" data-reward="day40">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">🏁</span>
+                  <span class="inv-dropdown-name">Reach Day 40</span>
+                </div>
+                <span class="inv-dropdown-count">+3💎</span>
+              </div>
+              <div class="inv-dropdown-item reward-item" id="day60Reward" data-reward="day60">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">🏁</span>
+                  <span class="inv-dropdown-name">Reach Day 60</span>
+                </div>
+                <span class="inv-dropdown-count">+4💎</span>
+              </div>
+              <div class="inv-dropdown-item reward-item" id="day99Reward" data-reward="day99">
+                <div class="inv-dropdown-left">
+                  <span class="inv-dropdown-icon">🏆</span>
+                  <span class="inv-dropdown-name">Reach Day 99</span>
+                </div>
+                <span class="inv-dropdown-count">+5💎</span>
               </div>
             </div>
           </div>
@@ -1318,6 +1510,190 @@
       
       group.position.set(x, 0, z);
       group.userData = { type: 'fan', action: 'salvageFan', worldX: x, worldZ: z };
+      return group;
+    }
+    
+    function createKey(x, z, tier) {
+      const group = new THREE.Group();
+      
+      // Key colors by tier
+      const keyColors = {
+        wooden: { main: 0xDEB887, dark: 0x8B4513, glow: 0xFFD700 },  // Burlywood/brown
+        golden: { main: 0xFFD700, dark: 0xDAA520, glow: 0xFFD700 },
+        ruby: { main: 0xFF3366, dark: 0xCC0033, glow: 0xFF6699 },
+        diamond: { main: 0x66FFFF, dark: 0x00CCCC, glow: 0x00FFFF },
+        obsidian: { main: 0x9966FF, dark: 0x6633CC, glow: 0xCC99FF }
+      };
+      
+      const colors = keyColors[tier] || keyColors.wooden;
+      const keyMaterial = new THREE.MeshBasicMaterial({ color: colors.main });
+      const darkMaterial = new THREE.MeshBasicMaterial({ color: colors.dark });
+      
+      // Simple key design - circular handle
+      const handleGeometry = new THREE.TorusGeometry(0.4, 0.12, 8, 16);
+      const handle = new THREE.Mesh(handleGeometry, keyMaterial);
+      handle.rotation.x = Math.PI / 2;
+      handle.position.set(-0.6, 0.2, 0);
+      group.add(handle);
+      
+      // Key shaft
+      const shaftGeometry = new THREE.BoxGeometry(1.2, 0.2, 0.15);
+      const shaft = new THREE.Mesh(shaftGeometry, keyMaterial);
+      shaft.position.set(0.4, 0.2, 0);
+      group.add(shaft);
+      
+      // Key teeth (3 simple teeth)
+      const teethPositions = [0.7, 0.9, 1.0];
+      teethPositions.forEach((tx, i) => {
+        const toothHeight = 0.2 + (i * 0.1);
+        const tooth = new THREE.Mesh(
+          new THREE.BoxGeometry(0.1, 0.15, toothHeight),
+          darkMaterial
+        );
+        tooth.position.set(tx, 0.2, toothHeight / 2);
+        group.add(tooth);
+      });
+      
+      group.position.set(x, 0, z);
+      group.userData = { type: 'key', action: 'collectKey', tier: tier, worldX: x, worldZ: z };
+      return group;
+    }
+    
+    function createChest(x, z, tier) {
+      const group = new THREE.Group();
+      
+      // Chest colors by tier
+      const chestColors = {
+        wooden: { main: 0x8B4513, trim: 0x5D3A1A, lock: 0xB8860B, emissive: 0x000000 },
+        golden: { main: 0xFFD700, trim: 0xB8860B, lock: 0xFFFFFF, emissive: 0x332200 },
+        ruby: { main: 0xE0115F, trim: 0x8B0A3A, lock: 0xFFD700, emissive: 0x220011 },
+        diamond: { main: 0x00BFFF, trim: 0x0080AA, lock: 0xFFFFFF, emissive: 0x112233 },
+        obsidian: { main: 0x1a1a2e, trim: 0x4B0082, lock: 0x9400D3, emissive: 0x110022 }
+      };
+      
+      const colors = chestColors[tier] || chestColors.wooden;
+      const mainMaterial = new THREE.MeshLambertMaterial({ 
+        color: colors.main,
+        emissive: colors.emissive
+      });
+      const trimMaterial = new THREE.MeshLambertMaterial({ color: colors.trim });
+      const lockMaterial = new THREE.MeshLambertMaterial({ 
+        color: colors.lock,
+        emissive: tier !== 'wooden' ? 0x222222 : 0x000000
+      });
+      
+      // Chest base (bottom half)
+      const baseGeometry = new THREE.BoxGeometry(2.5, 1.2, 1.8);
+      const base = new THREE.Mesh(baseGeometry, mainMaterial);
+      base.position.set(0, 0.6, 0);
+      base.castShadow = true;
+      base.receiveShadow = true;
+      group.add(base);
+      
+      // Chest lid (top half, slightly arched)
+      const lidGeometry = new THREE.BoxGeometry(2.5, 0.8, 1.8);
+      const lid = new THREE.Mesh(lidGeometry, mainMaterial);
+      lid.position.set(0, 1.6, 0);
+      lid.castShadow = true;
+      lid.receiveShadow = true;
+      group.add(lid);
+      
+      // Arched top of lid
+      const archGeometry = new THREE.BoxGeometry(2.5, 0.3, 1.4);
+      const arch = new THREE.Mesh(archGeometry, mainMaterial);
+      arch.position.set(0, 2.1, 0);
+      arch.castShadow = true;
+      group.add(arch);
+      
+      // Trim bands (horizontal straps)
+      const bandPositions = [0.3, 0.9, 1.3, 1.8];
+      bandPositions.forEach(y => {
+        const band = new THREE.Mesh(
+          new THREE.BoxGeometry(2.6, 0.15, 1.9),
+          trimMaterial
+        );
+        band.position.set(0, y, 0);
+        band.castShadow = true;
+        group.add(band);
+      });
+      
+      // Corner trims (vertical)
+      const corners = [
+        { x: -1.2, z: -0.85 },
+        { x: -1.2, z: 0.85 },
+        { x: 1.2, z: -0.85 },
+        { x: 1.2, z: 0.85 }
+      ];
+      corners.forEach(pos => {
+        const cornerTrim = new THREE.Mesh(
+          new THREE.BoxGeometry(0.2, 2.2, 0.2),
+          trimMaterial
+        );
+        cornerTrim.position.set(pos.x, 1.1, pos.z);
+        cornerTrim.castShadow = true;
+        group.add(cornerTrim);
+      });
+      
+      // Lock plate (front)
+      const lockPlate = new THREE.Mesh(
+        new THREE.BoxGeometry(0.6, 0.8, 0.1),
+        lockMaterial
+      );
+      lockPlate.position.set(0, 1.2, 0.95);
+      lockPlate.castShadow = true;
+      group.add(lockPlate);
+      
+      // Keyhole
+      const keyhole = new THREE.Mesh(
+        new THREE.BoxGeometry(0.15, 0.3, 0.12),
+        new THREE.MeshLambertMaterial({ color: 0x111111 })
+      );
+      keyhole.position.set(0, 1.15, 0.97);
+      group.add(keyhole);
+      
+      // Glowing base for visibility
+      const glowGeometry = new THREE.BoxGeometry(3.5, 0.05, 2.8);
+      const glowMaterial = new THREE.MeshBasicMaterial({ 
+        color: colors.main, 
+        transparent: true, 
+        opacity: 0.5 
+      });
+      const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+      glow.position.y = 0.02;
+      group.add(glow);
+      
+      // Beacon light for spotting from afar
+      const beaconGeometry = new THREE.BoxGeometry(0.4, 4, 0.4);
+      const beaconMaterial = new THREE.MeshBasicMaterial({ 
+        color: colors.main, 
+        transparent: true, 
+        opacity: 0.4 
+      });
+      const beacon = new THREE.Mesh(beaconGeometry, beaconMaterial);
+      beacon.position.set(0, 3, 0);
+      group.add(beacon);
+      
+      // Sparkle particles around the chest (for special tiers)
+      if (tier !== 'wooden') {
+        for (let i = 0; i < 6; i++) {
+          const angle = (i / 6) * Math.PI * 2;
+          const sparkle = new THREE.Mesh(
+            new THREE.BoxGeometry(0.15, 0.15, 0.15),
+            new THREE.MeshBasicMaterial({ color: colors.lock })
+          );
+          sparkle.position.set(
+            Math.cos(angle) * 1.8,
+            1.5 + Math.sin(i) * 0.5,
+            Math.sin(angle) * 1.3
+          );
+          sparkle.userData.sparkleAngle = angle;
+          sparkle.userData.sparkleOffset = i;
+          group.add(sparkle);
+        }
+      }
+      
+      group.position.set(x, 0, z);
+      group.userData = { type: 'chest', action: 'openChest', tier: tier, worldX: x, worldZ: z };
       return group;
     }
     
@@ -2262,7 +2638,7 @@
     const stewCount = document.getElementById('stewCount');
     
     const dayCounter = document.getElementById('dayCounter');
-    const dayDiamonds = document.getElementById('dayDiamonds');
+    const rewardsDiamondCount = document.getElementById('rewardsDiamondCount');
     const cycleIcon = document.getElementById('cycleIcon');
     const cycleCountdown = document.getElementById('cycleCountdown');
     const healthBar = document.getElementById('healthBar');
@@ -2280,6 +2656,7 @@
     const carrotItem = document.getElementById('carrotItem');
     const stewItem = document.getElementById('stewItem');
     const axeItem = document.getElementById('axeItem');
+    const spearItem = document.getElementById('spearItem');
     const metalItem = document.getElementById('metalItem');
     
     const pauseButton = document.getElementById('pauseButton');
@@ -2362,6 +2739,394 @@
     let diamondsEarned = 0;
     let healthLostThisCycle = false; // Track if player lost health during current day/night cycle
     
+    // ============================================
+    // REWARDS SYSTEM
+    // ============================================
+    
+    // Rewards state object
+    const rewardsState = {
+      // Rare items (true = found)
+      rareItems: {
+        lanternbark: false,
+        silverWolf: false,
+        whisperingFan: false,
+        frostCanister: false
+      },
+      // Which entity is the rare one (set during generation)
+      rareEntityMarkers: {
+        lanternbarkTree: null,    // Will be set to an entity reference
+        silverGleamWolf: null,
+        whisperingFanBlade: null,
+        frostLockedCanister: null
+      },
+      // Keys collected (count for each tier)
+      keys: {
+        wooden: 0,    // need 3
+        golden: 0,    // need 4
+        ruby: 0,      // need 5
+        diamond: 0,   // need 6
+        obsidian: 0   // need 7
+      },
+      keysRequired: {
+        wooden: 3,
+        golden: 4,
+        ruby: 5,
+        diamond: 6,
+        obsidian: 7
+      },
+      // Chests spawned (true = spawned in world)
+      chestSpawned: {
+        wooden: false,
+        golden: false,
+        ruby: false,
+        diamond: false,
+        obsidian: false
+      },
+      // Chests opened (true = opened and reward claimed)
+      chestsOpened: {
+        wooden: false,
+        golden: false,
+        ruby: false,
+        diamond: false,
+        obsidian: false
+      },
+      // Current key tier being collected (wooden -> golden -> ruby -> diamond -> obsidian)
+      currentKeyTier: null, // null until fire level 2
+      // Active chest in the world (spawned after collecting all keys of a tier)
+      activeChest: null,
+      // Milestones reached (true = claimed)
+      milestones: {
+        day10: false,
+        day20: false,
+        day40: false,
+        day60: false,
+        day99: false
+      },
+      // Weapon upgrades
+      weapons: {
+        hasGoodAxe: false,
+        hasSpear: false,
+        hasChainsaw: false
+      }
+    };
+    
+    // Key entities in the world
+    const keyEntities = [];
+    const chestEntities = [];
+    
+    // Chest entity in the world
+    let chestEntity = null;
+    
+    // Rare item spawn chances by fire level
+    const rareSpawnChances = {
+      lanternbark: [0.60, 0.90, 1.00, 1.00, 1.00],  // 60% L1, 90% L2, 100% L3+
+      silverWolf:  [0.20, 0.50, 0.80, 1.00, 1.00],  // 20% L1, 50% L2, 80% L3, 100% L4+
+      whisperingFan: [0.00, 0.25, 0.50, 1.00, 1.00], // 0% L1, 25% L2, 50% L3, 100% L4+
+      frostCanister: [0.00, 0.25, 0.50, 1.00, 1.00]  // 0% L1, 25% L2, 50% L3, 100% L4+
+    };
+    
+    // Check if a rare item should spawn for the current fire level
+    function shouldSpawnRareItem(rareType) {
+      const levelIndex = Math.min(currentFireLevel - 1, 4);
+      const chance = rareSpawnChances[rareType][levelIndex];
+      return Math.random() < chance;
+    }
+    
+    // Mark rare entities among existing entities of a type
+    function markRareEntities() {
+      // Only mark if not already found AND not already marked
+      if (!rewardsState.rareItems.lanternbark && !rewardsState.rareEntityMarkers.lanternbarkTree) {
+        const trees = entities.filter(e => e.type === 'tree' && !e.isRare);
+        if (trees.length > 0 && shouldSpawnRareItem('lanternbark')) {
+          const randomTree = trees[Math.floor(Math.random() * trees.length)];
+          randomTree.isRare = true;
+          randomTree.rareType = 'lanternbark';
+          rewardsState.rareEntityMarkers.lanternbarkTree = randomTree;
+          
+          // TODO: Remove debug marker after testing
+          // Add a small red dot at the base of the tree
+          if (randomTree.mesh) {
+            const markerGeometry = new THREE.SphereGeometry(0.15, 8, 8);
+            const markerMaterial = new THREE.MeshBasicMaterial({ color: 0xcc0000 }); // Red
+            const marker = new THREE.Mesh(markerGeometry, markerMaterial);
+            marker.position.set(0, 0.15, 0.6); // At the base, close to trunk
+            randomTree.mesh.add(marker);
+          }
+        }
+      }
+      
+      if (!rewardsState.rareItems.silverWolf && !rewardsState.rareEntityMarkers.silverGleamWolf) {
+        const wolves = entities.filter(e => e.type === 'wolf' && !e.isRare);
+        if (wolves.length > 0 && shouldSpawnRareItem('silverWolf')) {
+          const randomWolf = wolves[Math.floor(Math.random() * wolves.length)];
+          randomWolf.isRare = true;
+          randomWolf.rareType = 'silverWolf';
+          rewardsState.rareEntityMarkers.silverGleamWolf = randomWolf;
+        }
+      }
+      
+      if (!rewardsState.rareItems.whisperingFan && !rewardsState.rareEntityMarkers.whisperingFanBlade) {
+        const fans = entities.filter(e => e.type === 'fan' && !e.isRare);
+        if (fans.length > 0 && shouldSpawnRareItem('whisperingFan')) {
+          const randomFan = fans[Math.floor(Math.random() * fans.length)];
+          randomFan.isRare = true;
+          randomFan.rareType = 'whisperingFan';
+          rewardsState.rareEntityMarkers.whisperingFanBlade = randomFan;
+        }
+      }
+      
+      if (!rewardsState.rareItems.frostCanister && !rewardsState.rareEntityMarkers.frostLockedCanister) {
+        const canisters = entities.filter(e => e.type === 'fuel' && !e.isRare);
+        if (canisters.length > 0 && shouldSpawnRareItem('frostCanister')) {
+          const randomCanister = canisters[Math.floor(Math.random() * canisters.length)];
+          randomCanister.isRare = true;
+          randomCanister.rareType = 'frostCanister';
+          rewardsState.rareEntityMarkers.frostLockedCanister = randomCanister;
+        }
+      }
+    }
+    
+    // Calculate total diamonds from all sources
+    function calculateTotalDiamonds() {
+      let total = 0;
+      
+      // Rare items (1 diamond each)
+      if (rewardsState.rareItems.lanternbark) total += 1;
+      if (rewardsState.rareItems.silverWolf) total += 1;
+      if (rewardsState.rareItems.whisperingFan) total += 1;
+      if (rewardsState.rareItems.frostCanister) total += 1;
+      
+      // Diamond chest gives 3 diamonds
+      if (rewardsState.chestsOpened.diamond) total += 3;
+      
+      // Milestones
+      if (rewardsState.milestones.day10) total += 1;
+      if (rewardsState.milestones.day20) total += 2;
+      if (rewardsState.milestones.day40) total += 3;
+      if (rewardsState.milestones.day60) total += 4;
+      if (rewardsState.milestones.day99) total += 5;
+      
+      // Plus the night-survival diamonds (old system)
+      total += diamondsEarned;
+      
+      return total;
+    }
+    
+    // Update the rewards dropdown display
+    function updateRewardsDisplay() {
+      const totalDiamonds = calculateTotalDiamonds();
+      rewardsDiamondCount.textContent = totalDiamonds;
+      
+      // Update rare items
+      document.getElementById('lanternbarkReward').classList.toggle('earned', rewardsState.rareItems.lanternbark);
+      document.getElementById('lanternbarkReward').classList.toggle('unearned', !rewardsState.rareItems.lanternbark);
+      
+      document.getElementById('silverWolfReward').classList.toggle('earned', rewardsState.rareItems.silverWolf);
+      document.getElementById('silverWolfReward').classList.toggle('unearned', !rewardsState.rareItems.silverWolf);
+      
+      document.getElementById('whisperingFanReward').classList.toggle('earned', rewardsState.rareItems.whisperingFan);
+      document.getElementById('whisperingFanReward').classList.toggle('unearned', !rewardsState.rareItems.whisperingFan);
+      
+      document.getElementById('frostCanisterReward').classList.toggle('earned', rewardsState.rareItems.frostCanister);
+      document.getElementById('frostCanisterReward').classList.toggle('unearned', !rewardsState.rareItems.frostCanister);
+      
+      // Update chests (show key progress)
+      const chestTiers = ['wooden', 'golden', 'ruby', 'diamond', 'obsidian'];
+      chestTiers.forEach(tier => {
+        const chestEl = document.getElementById(`${tier}ChestReward`);
+        const keysEl = document.getElementById(`${tier}ChestKeys`);
+        const collected = rewardsState.keys[tier];
+        const required = rewardsState.keysRequired[tier];
+        
+        if (rewardsState.chestsOpened[tier]) {
+          chestEl.classList.add('earned');
+          chestEl.classList.remove('unearned');
+          keysEl.textContent = '✓ Opened';
+        } else {
+          chestEl.classList.remove('earned');
+          chestEl.classList.toggle('unearned', collected === 0 && rewardsState.currentKeyTier !== tier);
+          keysEl.textContent = `🔑×${collected}/${required}`;
+        }
+      });
+      
+      // Update milestones
+      document.getElementById('day10Reward').classList.toggle('earned', rewardsState.milestones.day10);
+      document.getElementById('day10Reward').classList.toggle('unearned', !rewardsState.milestones.day10);
+      
+      document.getElementById('day20Reward').classList.toggle('earned', rewardsState.milestones.day20);
+      document.getElementById('day20Reward').classList.toggle('unearned', !rewardsState.milestones.day20);
+      
+      document.getElementById('day40Reward').classList.toggle('earned', rewardsState.milestones.day40);
+      document.getElementById('day40Reward').classList.toggle('unearned', !rewardsState.milestones.day40);
+      
+      document.getElementById('day60Reward').classList.toggle('earned', rewardsState.milestones.day60);
+      document.getElementById('day60Reward').classList.toggle('unearned', !rewardsState.milestones.day60);
+      
+      document.getElementById('day99Reward').classList.toggle('earned', rewardsState.milestones.day99);
+      document.getElementById('day99Reward').classList.toggle('unearned', !rewardsState.milestones.day99);
+    }
+    
+    // Animate a diamond flying to the rewards section
+    function animateFlyingDiamond(onComplete) {
+      // Get the rewards category button position
+      const rewardsBtn = document.getElementById('rewardsCategory');
+      const rewardsRect = rewardsBtn.getBoundingClientRect();
+      const targetX = rewardsRect.left + rewardsRect.width / 2;
+      const targetY = rewardsRect.top + rewardsRect.height / 2;
+      
+      // Start position (center of screen)
+      const startX = window.innerWidth / 2;
+      const startY = window.innerHeight / 2;
+      
+      // Create a flash overlay
+      const flashOverlay = document.createElement('div');
+      flashOverlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: radial-gradient(circle, rgba(100, 200, 255, 0.5) 0%, rgba(100, 200, 255, 0) 70%);
+        z-index: 9999;
+        pointer-events: none;
+        animation: flashFade 2s ease-out forwards;
+      `;
+      document.body.appendChild(flashOverlay);
+      
+      // Create explosion of diamonds all over the screen
+      const diamondCount = 30;
+      const explosionDiamonds = [];
+      
+      for (let i = 0; i < diamondCount; i++) {
+        const diamond = document.createElement('div');
+        diamond.textContent = '💎';
+        diamond.style.cssText = `
+          position: fixed;
+          font-size: ${20 + Math.random() * 40}px;
+          z-index: 10001;
+          pointer-events: none;
+          left: ${Math.random() * window.innerWidth}px;
+          top: ${Math.random() * window.innerHeight}px;
+          opacity: 1;
+          filter: drop-shadow(0 0 10px rgba(100, 200, 255, 0.8));
+          animation: diamondExplosion 2s ease-out forwards;
+          animation-delay: ${Math.random() * 0.3}s;
+        `;
+        document.body.appendChild(diamond);
+        explosionDiamonds.push(diamond);
+      }
+      
+      // Add the explosion animation style if not exists
+      if (!document.getElementById('diamondExplosionStyle')) {
+        const style = document.createElement('style');
+        style.id = 'diamondExplosionStyle';
+        style.textContent = `
+          @keyframes diamondExplosion {
+            0% { opacity: 1; transform: scale(1) rotate(0deg); }
+            50% { opacity: 1; transform: scale(1.3) rotate(180deg); }
+            100% { opacity: 0; transform: scale(0.3) rotate(360deg); }
+          }
+          @keyframes flashFade {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+      
+      // After explosion (1 second), clean up and create the flying diamond
+      setTimeout(() => {
+        flashOverlay.remove();
+        explosionDiamonds.forEach(d => d.remove());
+        
+        // Create the main flying diamond
+        const diamond = document.createElement('div');
+        diamond.className = 'flying-diamond';
+        diamond.textContent = '💎';
+        diamond.style.left = `${startX - 24}px`;
+        diamond.style.top = `${startY - 24}px`;
+        document.body.appendChild(diamond);
+        
+        // Animate to target
+        const duration = 800;
+        const startTime = performance.now();
+        
+        function animate(currentTime) {
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          
+          // Easing function (ease-out cubic)
+          const eased = 1 - Math.pow(1 - progress, 3);
+          
+          const currentX = startX + (targetX - startX) * eased;
+          const currentY = startY + (targetY - startY) * eased;
+          
+          // Add a slight arc
+          const arc = Math.sin(progress * Math.PI) * -50;
+          
+          diamond.style.left = `${currentX - 24}px`;
+          diamond.style.top = `${currentY - 24 + arc}px`;
+          diamond.style.transform = `scale(${1 - progress * 0.5})`;
+          
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          } else {
+            diamond.remove();
+            // Flash the rewards button
+            rewardsBtn.style.transition = 'transform 0.1s, box-shadow 0.1s';
+            rewardsBtn.style.transform = 'scale(1.1)';
+            rewardsBtn.style.boxShadow = '0 0 20px rgba(100, 200, 255, 0.8)';
+            setTimeout(() => {
+              rewardsBtn.style.transform = '';
+              rewardsBtn.style.boxShadow = '';
+              if (onComplete) onComplete();
+            }, 200);
+          }
+        }
+        
+        requestAnimationFrame(animate);
+      }, 2000);
+    }
+    
+    // Award a diamond and show notification with animation
+    function awardRareItemDiamond(itemName) {
+      // First show the diamond animation
+      animateFlyingDiamond(() => {
+        // Then show the notification and update display
+        showCraftNotification(`🎉 You found the ${itemName}! +1💎`);
+        updateRewardsDisplay();
+      });
+    }
+    
+    // Check and award milestones at the start of a new day
+    function checkMilestones(day) {
+      if (day >= 10 && !rewardsState.milestones.day10) {
+        rewardsState.milestones.day10 = true;
+        showCraftNotification('🏁 Day 10 reached! +1💎');
+        updateRewardsDisplay();
+      }
+      if (day >= 20 && !rewardsState.milestones.day20) {
+        rewardsState.milestones.day20 = true;
+        showCraftNotification('🏁 Day 20 reached! +2💎');
+        updateRewardsDisplay();
+      }
+      if (day >= 40 && !rewardsState.milestones.day40) {
+        rewardsState.milestones.day40 = true;
+        showCraftNotification('🏁 Day 40 reached! +3💎');
+        updateRewardsDisplay();
+      }
+      if (day >= 60 && !rewardsState.milestones.day60) {
+        rewardsState.milestones.day60 = true;
+        showCraftNotification('🏁 Day 60 reached! +4💎');
+        updateRewardsDisplay();
+      }
+      if (day >= 99 && !rewardsState.milestones.day99) {
+        rewardsState.milestones.day99 = true;
+        showCraftNotification('🏆 Day 99 reached! +5💎');
+        updateRewardsDisplay();
+      }
+    }
+    
     const FIRE_DECAY_RATES = {
       1: 100 / 600,  // 10 minutes (50% slower)
       2: 100 / 960,  // 16 minutes (50% slower)
@@ -2436,6 +3201,26 @@
       };
     }
     
+    // Harder questions for Good Axe/Spear (both numbers 4 or higher)
+    function generateHarderQuestion() {
+      const a = 4 + Math.floor(Math.random() * 7); // 4-10
+      const b = 4 + Math.floor(Math.random() * 7); // 4-10
+      return {
+        equation: `${a} + ${b}`,
+        answer: a + b
+      };
+    }
+    
+    // Chainsaw question (single problem)
+    function generateChainsawQuestion() {
+      const a = 4 + Math.floor(Math.random() * 7); // 4-10
+      const b = 4 + Math.floor(Math.random() * 7); // 4-10
+      return {
+        equation: `${a} + ${b}`,
+        answer: a + b
+      };
+    }
+    
     function generateCoalOrMetalQuestion() {
       const a = 5 + Math.floor(Math.random() * 6);
       const b = 5 + Math.floor(Math.random() * 6);
@@ -2443,6 +3228,31 @@
         equation: `${a} + ${b}`,
         answer: a + b
       };
+    }
+    
+    function generateKeyQuestion() {
+      // Format: ? + b = c  OR  a + ? = c
+      // Both numbers between 0 and 10
+      const a = Math.floor(Math.random() * 11); // 0-10
+      const b = Math.floor(Math.random() * 11); // 0-10
+      const c = a + b;
+      
+      // Randomly choose which number is the mystery
+      if (Math.random() < 0.5) {
+        // ? + b = c (solve for a)
+        return {
+          equation: `? + ${b} = ${c}`,
+          answer: a,
+          isKeyQuestion: true  // Flag to not add "= ?" in display
+        };
+      } else {
+        // a + ? = c (solve for b)
+        return {
+          equation: `${a} + ? = ${c}`,
+          answer: b,
+          isKeyQuestion: true  // Flag to not add "= ?" in display
+        };
+      }
     }
     
     function generateUniqueQuestions(generator, count) {
@@ -2528,6 +3338,9 @@
           scene.add(mesh);
         }
       });
+      
+      // Mark rare entities based on spawn chances (after meshes are created)
+      markRareEntities();
     }
     
     // ============================================
@@ -2602,20 +3415,41 @@
       currentQuestionTimedOut = false;
       
       if (actionKey === 'fightWolf') {
-        currentQuestions = generateUniqueQuestions(generateWolfQuestion, 3);
+        // Spear: 2 harder questions, otherwise 3 normal questions
+        if (rewardsState.weapons.hasSpear) {
+          currentQuestions = generateUniqueQuestions(generateHarderQuestion, 2);
+        } else {
+          currentQuestions = generateUniqueQuestions(generateWolfQuestion, 3);
+        }
         mathBubbleLabel.textContent = "Fight Wolf!";
         mathTimerBar.style.display = 'block';
         mathQuestionCounter.style.display = 'block';
       } else if (actionKey === 'fightCultist') {
-        currentQuestions = generateUniqueQuestions(generateCultistQuestion, 3);
+        // Spear: 2 harder questions, otherwise 3 normal questions
+        if (rewardsState.weapons.hasSpear) {
+          currentQuestions = generateUniqueQuestions(generateHarderQuestion, 2);
+        } else {
+          currentQuestions = generateUniqueQuestions(generateCultistQuestion, 3);
+        }
         mathBubbleLabel.textContent = "Fight Cultist!";
         mathTimerBar.style.display = 'block';
         mathQuestionCounter.style.display = 'block';
       } else if (actionKey === 'chop') {
-        currentQuestions = generateUniqueQuestions(generateTreeQuestion, 3);
-        mathBubbleLabel.textContent = "Chop Tree";
+        // Chainsaw: 1 question, Good Axe: 2 harder questions, otherwise 3 normal questions
+        if (rewardsState.weapons.hasChainsaw) {
+          currentQuestions = [generateChainsawQuestion()];
+          mathBubbleLabel.textContent = "⛓️ Chainsaw Tree";
+          mathQuestionCounter.style.display = 'none';
+        } else if (rewardsState.weapons.hasGoodAxe) {
+          currentQuestions = generateUniqueQuestions(generateHarderQuestion, 2);
+          mathBubbleLabel.textContent = "🪓 Chop Tree";
+          mathQuestionCounter.style.display = 'block';
+        } else {
+          currentQuestions = generateUniqueQuestions(generateTreeQuestion, 3);
+          mathBubbleLabel.textContent = "Chop Tree";
+          mathQuestionCounter.style.display = 'block';
+        }
         mathTimerBar.style.display = 'none';
-        mathQuestionCounter.style.display = 'block';
       } else if (actionKey === 'collectFuel') {
         currentQuestions = [generateCoalOrMetalQuestion()];
         mathBubbleLabel.textContent = "Collect Fuel";
@@ -2626,6 +3460,12 @@
         mathBubbleLabel.textContent = "Salvage Fan";
         mathTimerBar.style.display = 'none';
         mathQuestionCounter.style.display = 'none';
+      } else if (actionKey === 'collectKey') {
+        currentQuestions = [generateKeyQuestion(), generateKeyQuestion(), generateKeyQuestion()];
+        const tierName = entity.tier.charAt(0).toUpperCase() + entity.tier.slice(1);
+        mathBubbleLabel.textContent = `🔑 ${tierName} Key`;
+        mathTimerBar.style.display = 'none';
+        mathQuestionCounter.style.display = 'block';
       }
       
       // Stop player movement
@@ -2641,7 +3481,8 @@
     
     function showCurrentQuestion() {
       const q = currentQuestions[currentQuestionIndex];
-      mathQuestion.textContent = `${q.equation} = ?`;
+      // Key questions already have the full equation, others need "= ?"
+      mathQuestion.textContent = q.isKeyQuestion ? q.equation : `${q.equation} = ?`;
       
       if (currentQuestions.length > 1) {
         mathQuestionCounter.textContent = `Question ${currentQuestionIndex + 1} of ${currentQuestions.length}`;
@@ -2718,7 +3559,7 @@
               
               // Lose 2 diamonds on death (can't go below 0)
               diamondsEarned = Math.max(0, diamondsEarned - 2);
-              dayDiamonds.textContent = `${diamondsEarned} 💎`;
+              updateRewardsDisplay();
               
               playerHealth = 100;
               updateHealthBar();
@@ -2850,7 +3691,7 @@
               
               // Lose 2 diamonds on death (can't go below 0)
               diamondsEarned = Math.max(0, diamondsEarned - 2);
-              dayDiamonds.textContent = `${diamondsEarned} 💎`;
+              updateRewardsDisplay();
               
               playerHealth = 100;
               updateHealthBar();
@@ -2896,23 +3737,64 @@
       const actionKey = currentAction;
       
       if (actionKey === 'chop') {
-        // Tree: get wood ONLY for questions answered correctly on first try
-        const wood = questionsCorrectFirstTry.filter(x => x === true).length;
-        const allThreeFirstTry = (questionsCorrectFirstTry.length === 3 && 
-                                   questionsCorrectFirstTry.every(x => x === true));
+        // Tree: get wood based on weapon
+        let woodEarned = 0;
+        let feedbackText = "";
         
-        if (wood > 0) {
-          woodCount.textContent = parseInt(woodCount.textContent, 10) + wood;
+        if (rewardsState.weapons.hasChainsaw) {
+          // Chainsaw: 1 question = 4 wood if correct on first try
+          const correctFirstTry = questionsCorrectFirstTry[0] === true;
+          if (correctFirstTry) {
+            woodEarned = 4;
+            feedbackText = `⛓️ Chainsaw! +4 wood`;
+          } else {
+            feedbackText = "No wood - need to answer correctly on first try!";
+          }
+        } else if (rewardsState.weapons.hasGoodAxe) {
+          // Good Axe: 2 questions, wood for each correct on first try
+          woodEarned = questionsCorrectFirstTry.filter(x => x === true).length;
+          const bothFirstTry = (questionsCorrectFirstTry.length === 2 && 
+                                 questionsCorrectFirstTry.every(x => x === true));
+          if (bothFirstTry) {
+            woodEarned += 1; // Bonus sapling
+            feedbackText = `✓ Perfect! +${woodEarned - 1} wood +1 sapling!`;
+          } else if (woodEarned > 0) {
+            feedbackText = `+${woodEarned} wood`;
+          } else {
+            feedbackText = "No wood - need to answer correctly on first try!";
+          }
+        } else {
+          // Normal axe: 3 questions, wood for each correct on first try
+          woodEarned = questionsCorrectFirstTry.filter(x => x === true).length;
+          const allThreeFirstTry = (questionsCorrectFirstTry.length === 3 && 
+                                     questionsCorrectFirstTry.every(x => x === true));
+          if (allThreeFirstTry) {
+            woodEarned += 1; // Bonus sapling
+            feedbackText = `✓ Perfect! +${woodEarned - 1} wood +1 sapling!`;
+          } else if (woodEarned > 0) {
+            feedbackText = `+${woodEarned} wood`;
+          } else {
+            feedbackText = "No wood - need to answer correctly on first try!";
+          }
         }
         
-        if (allThreeFirstTry) {
-          // Bonus sapling (represented as extra wood) - only if ALL 3 were first try
-          woodCount.textContent = parseInt(woodCount.textContent, 10) + 1;
-          mathBubbleFeedback.textContent = `✓ Perfect! +${wood} wood +1 sapling!`;
-        } else if (wood > 0) {
-          mathBubbleFeedback.textContent = `+${wood} wood`;
-        } else {
+        if (woodEarned > 0) {
+          woodCount.textContent = parseInt(woodCount.textContent, 10) + woodEarned;
+        }
+        mathBubbleFeedback.textContent = feedbackText;
+        
+        // Legacy code path removed - handled above
+        if (false) {
           mathBubbleFeedback.textContent = "No wood - you needed to answer correctly on first try!";
+        }
+        
+        // Check for rare Lanternbark Tree
+        if (currentInteractable && currentInteractable.isRare && currentInteractable.rareType === 'lanternbark') {
+          rewardsState.rareItems.lanternbark = true;
+          rewardsState.rareEntityMarkers.lanternbarkTree = null;
+          setTimeout(() => {
+            awardRareItemDiamond('Lanternbark Tree');
+          }, 100);
         }
         
         if (currentInteractable && currentInteractable.mesh) {
@@ -2945,17 +3827,29 @@
       } else if (actionKey === 'fightWolf') {
         // Wolf: get meat ONLY for questions answered correctly on first try AND on time
         const meat = questionsCorrectFirstTry.filter(x => x === true).length;
+        const maxQuestions = rewardsState.weapons.hasSpear ? 2 : 3;
+        const isPerfect = meat === maxQuestions;
         
         if (meat > 0) {
           meatCount.textContent = parseInt(meatCount.textContent, 10) + meat;
         }
         
-        if (meat === 3) {
-          mathBubbleFeedback.textContent = `✓ Wolf defeated! +${meat} meat`;
+        if (isPerfect) {
+          const spearPrefix = rewardsState.weapons.hasSpear ? "🔱 " : "";
+          mathBubbleFeedback.textContent = `${spearPrefix}✓ Wolf defeated! +${meat} meat`;
         } else if (meat > 0) {
           mathBubbleFeedback.textContent = `+${meat} meat`;
         } else {
           mathBubbleFeedback.textContent = "No meat - too slow or wrong answers!";
+        }
+        
+        // Check for rare Silver-Gleam Wolf
+        if (currentInteractable && currentInteractable.isRare && currentInteractable.rareType === 'silverWolf') {
+          rewardsState.rareItems.silverWolf = true;
+          rewardsState.rareEntityMarkers.silverGleamWolf = null;
+          setTimeout(() => {
+            awardRareItemDiamond('Silver-Gleam Wolf');
+          }, 100);
         }
         
         if (currentInteractable && currentInteractable.mesh) {
@@ -2974,6 +3868,15 @@
           mathBubbleFeedback.textContent = "No fuel - you needed to answer correctly on first try!";
         }
         
+        // Check for rare Frost-Locked Canister
+        if (currentInteractable && currentInteractable.isRare && currentInteractable.rareType === 'frostCanister') {
+          rewardsState.rareItems.frostCanister = true;
+          rewardsState.rareEntityMarkers.frostLockedCanister = null;
+          setTimeout(() => {
+            awardRareItemDiamond('Frost-Locked Canister');
+          }, 100);
+        }
+        
         if (currentInteractable && currentInteractable.mesh) {
           scene.remove(currentInteractable.mesh);
           const index = entities.indexOf(currentInteractable);
@@ -2990,10 +3893,48 @@
           mathBubbleFeedback.textContent = "No metal - you needed to answer correctly on first try!";
         }
         
+        // Check for rare Whispering Fan Blade
+        if (currentInteractable && currentInteractable.isRare && currentInteractable.rareType === 'whisperingFan') {
+          rewardsState.rareItems.whisperingFan = true;
+          rewardsState.rareEntityMarkers.whisperingFanBlade = null;
+          setTimeout(() => {
+            awardRareItemDiamond('Whispering Fan Blade');
+          }, 100);
+        }
+        
         if (currentInteractable && currentInteractable.mesh) {
           scene.remove(currentInteractable.mesh);
           const index = entities.indexOf(currentInteractable);
           if (index > -1) entities.splice(index, 1);
+        }
+      } else if (actionKey === 'collectKey') {
+        // Key collection - always succeeds (even if wrong first try, they still get the key)
+        const tier = currentInteractable.tier;
+        rewardsState.keys[tier]++;
+        
+        const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
+        const collected = rewardsState.keys[tier];
+        const required = rewardsState.keysRequired[tier];
+        
+        mathBubbleFeedback.textContent = `✓ Got ${tierName} Key! (${collected}/${required})`;
+        
+        // Remove the key from the world
+        if (currentInteractable && currentInteractable.mesh) {
+          scene.remove(currentInteractable.mesh);
+          const index = keyEntities.indexOf(currentInteractable);
+          if (index > -1) keyEntities.splice(index, 1);
+        }
+        
+        updateRewardsDisplay();
+        
+        // Check if we have all keys for this tier
+        if (collected >= required) {
+          setTimeout(() => {
+            onAllKeysCollected(tier);
+          }, 1000);
+        } else {
+          // Schedule next key spawn after delay
+          scheduleNextKeySpawn();
         }
       } else if (actionKey === 'harvestFarm') {
         // Farm harvest: add carrots based on farm plots owned
@@ -3082,6 +4023,229 @@
           return;
         }
       }
+      
+      // Check keys
+      for (const key of keyEntities) {
+        const dx = playerX - key.x;
+        const dz = playerZ - key.z;
+        const distance = Math.sqrt(dx * dx + dz * dz);
+        
+        if (distance < interactionDistance) {
+          showAction('collectKey', key);
+          return;
+        }
+      }
+      
+      // Check proximity to chests - auto-open when close
+      for (const chest of chestEntities) {
+        const dx = playerX - chest.x;
+        const dz = playerZ - chest.z;
+        const distance = Math.sqrt(dx * dx + dz * dz);
+        
+        if (distance < interactionDistance + 1) { // Slightly larger range for chests
+          openChest(chest);
+          return;
+        }
+      }
+    }
+    
+    // Open a chest and award the reward
+    function openChest(chest) {
+      const tier = chest.tier;
+      const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
+      
+      // Remove chest from world
+      if (chest.mesh) {
+        scene.remove(chest.mesh);
+        const index = chestEntities.indexOf(chest);
+        if (index > -1) chestEntities.splice(index, 1);
+      }
+      
+      // Mark as opened
+      rewardsState.chestsOpened[tier] = true;
+      rewardsState.activeChest = null;
+      
+      // Determine and give the reward
+      const reward = determineChestReward(tier);
+      giveChestReward(reward);
+      
+      // Show reward popup
+      showChestRewardPopup(tierName, reward);
+      
+      // Start spawning next tier of keys after chest is opened
+      const tierOrder = ['wooden', 'golden', 'ruby', 'diamond', 'obsidian'];
+      const currentIndex = tierOrder.indexOf(tier);
+      
+      if (currentIndex < tierOrder.length - 1) {
+        const nextTier = tierOrder[currentIndex + 1];
+        rewardsState.currentKeyTier = nextTier;
+        keysSpawnedThisTier = 0;
+        
+        // Spawn first key of next tier after a short delay
+        setTimeout(() => {
+          spawnSingleKey(nextTier);
+        }, 3000);
+      }
+      
+      updateRewardsDisplay();
+    }
+    
+    // Determine what reward comes from a chest
+    function determineChestReward(tier) {
+      const roll = Math.random();
+      
+      switch (tier) {
+        case 'wooden':
+          // 50% Good Axe, 25% 3 metal scraps, 25% 1 fuel canister
+          if (roll < 0.5) {
+            return { type: 'goodAxe', name: 'Good Axe', description: 'Trees now take 2 harder problems to chop!' };
+          } else if (roll < 0.75) {
+            return { type: 'scraps', amount: 3, name: '3 Metal Scraps', description: 'Added to your inventory!' };
+          } else {
+            return { type: 'fuel', amount: 1, name: '1 Fuel Canister', description: 'Added to your inventory!' };
+          }
+          
+        case 'golden':
+          // If already have Good Axe: 50% scraps, 50% fuel
+          // Otherwise: Good Axe
+          if (rewardsState.weapons.hasGoodAxe) {
+            if (roll < 0.5) {
+              return { type: 'scraps', amount: 3, name: '3 Metal Scraps', description: 'Added to your inventory!' };
+            } else {
+              return { type: 'fuel', amount: 1, name: '1 Fuel Canister', description: 'Added to your inventory!' };
+            }
+          } else {
+            return { type: 'goodAxe', name: 'Good Axe', description: 'Trees now take 2 harder problems to chop!' };
+          }
+          
+        case 'ruby':
+          return { type: 'spear', name: 'Spear', description: 'Wolves and cultists now take 2 harder problems to defeat!' };
+          
+        case 'diamond':
+          return { type: 'diamonds', amount: 3, name: '3 Diamonds', description: 'Shiny!' };
+          
+        case 'obsidian':
+          return { type: 'chainsaw', name: 'Chainsaw', description: 'Trees now take just 1 problem for 4 wood!' };
+          
+        default:
+          return { type: 'fuel', amount: 1, name: '1 Fuel Canister', description: 'Added to your inventory!' };
+      }
+    }
+    
+    // Give the chest reward to the player
+    function giveChestReward(reward) {
+      switch (reward.type) {
+        case 'goodAxe':
+          rewardsState.weapons.hasGoodAxe = true;
+          updateWeaponsDisplay();
+          break;
+        case 'spear':
+          rewardsState.weapons.hasSpear = true;
+          updateWeaponsDisplay();
+          break;
+        case 'chainsaw':
+          rewardsState.weapons.hasChainsaw = true;
+          // Chainsaw replaces good axe
+          rewardsState.weapons.hasGoodAxe = false;
+          updateWeaponsDisplay();
+          break;
+        case 'scraps':
+          const currentScraps = parseInt(scrapCount.textContent) || 0;
+          scrapCount.textContent = currentScraps + reward.amount;
+          break;
+        case 'fuel':
+          const currentFuel = parseInt(coalCount.textContent) || 0;
+          coalCount.textContent = currentFuel + reward.amount;
+          break;
+        case 'diamonds':
+          // Award diamonds
+          for (let i = 0; i < reward.amount; i++) {
+            diamondsEarned++;
+          }
+          break;
+      }
+    }
+    
+    // Show a popup for the chest reward
+    function showChestRewardPopup(chestName, reward) {
+      // Create popup overlay
+      const popup = document.createElement('div');
+      popup.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+        animation: fadeIn 0.3s ease;
+      `;
+      
+      // Emoji for reward type
+      const rewardEmoji = {
+        goodAxe: '🪓',
+        spear: '🔱',
+        chainsaw: '⛓️',
+        scraps: '⚙️',
+        fuel: '⛽',
+        diamonds: '💎'
+      };
+      
+      const emoji = rewardEmoji[reward.type] || '🎁';
+      
+      popup.innerHTML = `
+        <div style="
+          background: linear-gradient(135deg, #2a1a0a 0%, #4a2a1a 100%);
+          border: 4px solid #FFD700;
+          border-radius: 20px;
+          padding: 40px 60px;
+          text-align: center;
+          box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
+          animation: popIn 0.4s ease;
+        ">
+          <div style="font-size: 48px; margin-bottom: 10px;">🎉</div>
+          <div style="font-size: 24px; color: #FFD700; margin-bottom: 20px; font-family: 'Cinzel', serif;">
+            ${chestName} Chest Opened!
+          </div>
+          <div style="font-size: 64px; margin: 20px 0;">${emoji}</div>
+          <div style="font-size: 28px; color: #fff; margin-bottom: 10px; font-family: 'Cinzel', serif;">
+            ${reward.name}
+          </div>
+          <div style="font-size: 18px; color: #ccc; margin-bottom: 30px;">
+            ${reward.description}
+          </div>
+          <button id="closeChestPopup" style="
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-family: 'Cinzel', serif;
+            color: #2a1a0a;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+          ">Continue</button>
+        </div>
+      `;
+      
+      document.body.appendChild(popup);
+      
+      // Add close handler
+      document.getElementById('closeChestPopup').addEventListener('click', () => {
+        popup.remove();
+      });
+      
+      // Also close on any key press
+      const closeOnKey = (e) => {
+        popup.remove();
+        document.removeEventListener('keydown', closeOnKey);
+      };
+      setTimeout(() => {
+        document.addEventListener('keydown', closeOnKey);
+      }, 500);
     }
     
     // ============================================
@@ -3168,8 +4332,157 @@
       // Expand the map with new entities
       expandMap();
       
+      // Start key spawning at Fire Level 2
+      if (currentFireLevel === 2 && rewardsState.currentKeyTier === null) {
+        rewardsState.currentKeyTier = 'wooden';
+        keysSpawnedThisTier = 0;
+        spawnSingleKey('wooden');
+      }
+      
       // Show notification
       showMapExpansionNotification();
+    }
+    
+    // Track how many keys have been spawned for current tier
+    let keysSpawnedThisTier = 0;
+    let keySpawnTimeout = null;
+    const KEY_SPAWN_DELAY = 60000; // 60 seconds between keys
+    
+    // Called when all keys of a tier are collected
+    function onAllKeysCollected(tier) {
+      const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
+      showCraftNotification(`🎉 All ${tierName} Keys collected! A chest has appeared - find it!`);
+      
+      // Clear any pending key spawn
+      if (keySpawnTimeout) {
+        clearTimeout(keySpawnTimeout);
+        keySpawnTimeout = null;
+      }
+      
+      // Spawn the chest - next tier keys will spawn when chest is OPENED
+      spawnChest(tier);
+      
+      // Clear current key tier until chest is opened
+      rewardsState.currentKeyTier = null;
+    }
+    
+    // Schedule the next key spawn after a delay
+    function scheduleNextKeySpawn() {
+      const tier = rewardsState.currentKeyTier;
+      if (!tier) return;
+      
+      const required = rewardsState.keysRequired[tier];
+      const collected = rewardsState.keys[tier];
+      
+      // Only spawn more if we haven't spawned all required yet
+      // and there are no keys currently in the world waiting to be collected
+      if (keysSpawnedThisTier < required && keyEntities.length === 0) {
+        keySpawnTimeout = setTimeout(() => {
+          if (rewardsState.currentKeyTier === tier) { // Make sure tier hasn't changed
+            const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
+            spawnSingleKey(tier);
+          }
+        }, KEY_SPAWN_DELAY);
+      }
+    }
+    
+    // Spawn a chest of a specific tier
+    function spawnChest(tier) {
+      const minDistance = 10;
+      const fenceRadius = 14.5;
+      const fencePadding = 3;
+      
+      function isTooClose(x, z) {
+        const distFromCampfire = Math.sqrt(x * x + z * z);
+        if (distFromCampfire < fenceRadius + fencePadding) return true;
+        
+        // Check distance from other entities, keys, and chests
+        for (const entity of [...entities, ...keyEntities, ...chestEntities]) {
+          const dx = x - entity.x;
+          const dz = z - entity.z;
+          const dist = Math.sqrt(dx * dx + dz * dz);
+          if (dist < minDistance) return true;
+        }
+        return false;
+      }
+      
+      let spawned = false;
+      let attempts = 0;
+      let chestX, chestZ;
+      
+      while (!spawned && attempts < 100) {
+        const angle = Math.random() * Math.PI * 2;
+        const radius = fenceRadius + fencePadding + 8 + Math.random() * (worldRadius - fenceRadius - fencePadding - 15);
+        chestX = Math.cos(angle) * radius;
+        chestZ = Math.sin(angle) * radius;
+        
+        const maxCoord = worldSize / 2 - 3;
+        if (Math.abs(chestX) < maxCoord && Math.abs(chestZ) < maxCoord && !isTooClose(chestX, chestZ)) {
+          spawned = true;
+        }
+        attempts++;
+      }
+      
+      if (spawned) {
+        const chestEntity = { type: 'chest', action: 'openChest', tier: tier, x: chestX, z: chestZ };
+        const mesh = createChest(chestX, chestZ, tier);
+        chestEntity.mesh = mesh;
+        chestEntities.push(chestEntity);
+        scene.add(mesh);
+        
+        // Mark the chest as spawned in rewards state
+        rewardsState.chestSpawned[tier] = true;
+        
+        console.log(`Spawned ${tier} chest at (${chestX.toFixed(1)}, ${chestZ.toFixed(1)})`);
+      } else {
+        console.warn(`Failed to spawn ${tier} chest after ${attempts} attempts`);
+      }
+    }
+    
+    // Spawn a single key
+    function spawnSingleKey(tier) {
+      const minDistance = 8;
+      const fenceRadius = 14.5;
+      const fencePadding = 3;
+      
+      function isTooClose(x, z) {
+        const distFromCampfire = Math.sqrt(x * x + z * z);
+        if (distFromCampfire < fenceRadius + fencePadding) return true;
+        
+        // Check distance from other entities and keys
+        for (const entity of [...entities, ...keyEntities]) {
+          const dx = x - entity.x;
+          const dz = z - entity.z;
+          const dist = Math.sqrt(dx * dx + dz * dz);
+          if (dist < minDistance) return true;
+        }
+        return false;
+      }
+      
+      let spawned = false;
+      let attempts = 0;
+      
+      while (!spawned && attempts < 50) {
+        const angle = Math.random() * Math.PI * 2;
+        const radius = fenceRadius + fencePadding + 5 + Math.random() * (worldRadius - fenceRadius - fencePadding - 10);
+        const x = Math.cos(angle) * radius;
+        const z = Math.sin(angle) * radius;
+        
+        const maxCoord = worldSize / 2 - 2;
+        if (Math.abs(x) < maxCoord && Math.abs(z) < maxCoord && !isTooClose(x, z)) {
+          const keyEntity = { type: 'key', action: 'collectKey', tier: tier, x, z };
+          const mesh = createKey(x, z, tier);
+          keyEntity.mesh = mesh;
+          keyEntities.push(keyEntity);
+          scene.add(mesh);
+          keysSpawnedThisTier++;
+          spawned = true;
+        }
+        attempts++;
+      }
+      
+      console.log(`Spawned ${tier} key (${keysSpawnedThisTier}/${rewardsState.keysRequired[tier]})`);
+      updateRewardsDisplay();
     }
     
     // Check and respawn trees if count drops below minimum
@@ -3313,6 +4626,9 @@
       placeNewEntities('wolf', 'fightWolf', baseWolfCount * scaleFactor);
       placeNewEntities('fuel', 'collectFuel', baseFuelCount * scaleFactor);
       placeNewEntities('fan', 'salvageFan', baseFanCount * scaleFactor);
+      
+      // Check for rare items in newly spawned entities
+      markRareEntities();
     }
     
     function showMapExpansionNotification() {
@@ -3393,7 +4709,11 @@
           const daysToAdd = 1 + bedsOwned;
           currentDay += daysToAdd;
           dayCounter.textContent = currentDay;
-          dayDiamonds.textContent = `${diamondsEarned} 💎`;
+          
+          // Check for milestone rewards at the start of the new day
+          checkMilestones(currentDay);
+          updateRewardsDisplay();
+          
           cycleTimeRemaining = DAY_DURATION;
           setNightMode(false);
           nightWarningShown = false;
@@ -3819,7 +5139,7 @@
           
           // Lose 2 diamonds on death (can't go below 0)
           diamondsEarned = Math.max(0, diamondsEarned - 2);
-          dayDiamonds.textContent = `${diamondsEarned} 💎`;
+          updateRewardsDisplay();
           
           playerHealth = 100;
           updateHealthBar();
@@ -3896,6 +5216,37 @@
       minimapCtx.arc(campfireX, campfireY, 3, 0, Math.PI * 2);
       minimapCtx.fill();
       
+      // Draw chests on minimap
+      for (const chest of chestEntities) {
+          const chestMinimapX = ((chest.x / worldSize) + 0.5) * 150;
+          const chestMinimapY = ((chest.z / worldSize) + 0.5) * 150;
+          
+          // Chest colors for minimap
+          const chestMinimapColors = {
+            wooden: '#8B4513',
+            golden: '#FFD700',
+            ruby: '#E0115F',
+            diamond: '#00BFFF',
+            obsidian: '#9400D3'
+          };
+          
+          const chestColor = chestMinimapColors[chest.tier] || '#8B4513';
+          
+          // Draw pulsing chest icon
+          const pulseSize = 4 + Math.sin(Date.now() / 200) * 1;
+          
+          // Outer glow
+          minimapCtx.fillStyle = chestColor;
+          minimapCtx.globalAlpha = 0.3;
+          minimapCtx.beginPath();
+          minimapCtx.arc(chestMinimapX, chestMinimapY, pulseSize + 3, 0, Math.PI * 2);
+          minimapCtx.fill();
+          
+          // Inner chest
+          minimapCtx.globalAlpha = 1;
+          minimapCtx.fillRect(chestMinimapX - pulseSize/2, chestMinimapY - pulseSize/2, pulseSize, pulseSize);
+      }
+      
       // Draw player
       const playerMinimapX = ((playerX / worldSize) + 0.5) * 150;
       const playerMinimapY = ((playerZ / worldSize) + 0.5) * 150;
@@ -3934,6 +5285,30 @@
       // Food items - always visible
       carrotCount.textContent = carrots;
       stewCount.textContent = stew;
+    }
+    
+    // Update weapons display based on rewards state
+    function updateWeaponsDisplay() {
+      const axeName = document.getElementById('axeName');
+      const spearItem = document.getElementById('spearItem');
+      
+      // Update axe display based on upgrades
+      if (rewardsState.weapons.hasChainsaw) {
+        axeName.textContent = "⛓️ Chainsaw";
+        axeItem.querySelector('.inv-dropdown-icon').textContent = "⛓️";
+      } else if (rewardsState.weapons.hasGoodAxe) {
+        axeName.textContent = "Good Axe";
+        axeItem.querySelector('.inv-dropdown-icon').textContent = "🪓";
+      } else {
+        axeName.textContent = "Old Axe";
+      }
+      
+      // Show/hide spear
+      if (rewardsState.weapons.hasSpear) {
+        spearItem.style.display = 'flex';
+      } else {
+        spearItem.style.display = 'none';
+      }
     }
     
     // Carrots: Restore 3% hunger
@@ -4009,7 +5384,13 @@
     // Old Axe: No action yet
     axeItem.addEventListener('click', (e) => {
       e.stopPropagation();
-      // No action yet
+      // No action - passive weapon upgrade
+    });
+    
+    // Spear: No action (passive upgrade)
+    spearItem.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // No action - passive weapon upgrade
     });
     
     // Fuel: Add to fire if near campfire
@@ -4610,7 +5991,16 @@
       history.pushState(null, null, location.href);
     });
     
+    // Track last submit time to prevent rapid-fire submissions
+    let lastSubmitTime = 0;
+    const SUBMIT_COOLDOWN = 500; // 500ms cooldown between submissions
+    
     window.addEventListener('keydown', (e) => {
+      // Always allow browser refresh (Ctrl+R / Cmd+R)
+      if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+        return; // Let the browser handle it
+      }
+      
       if (isPaused) return; // Ignore all key presses when paused
       
       if (isDialogOpen) {
@@ -4621,7 +6011,12 @@
           }
         }
         if (e.key === 'Enter') {
-          handleSubmit();
+          // Debounce to prevent mashing
+          const now = Date.now();
+          if (now - lastSubmitTime >= SUBMIT_COOLDOWN) {
+            lastSubmitTime = now;
+            handleSubmit();
+          }
         }
         return;
       }
@@ -4662,7 +6057,14 @@
       }
     });
     
-    mathSubmitButton.addEventListener('click', handleSubmit);
+    mathSubmitButton.addEventListener('click', () => {
+      // Debounce to prevent mashing
+      const now = Date.now();
+      if (now - lastSubmitTime >= SUBMIT_COOLDOWN) {
+        lastSubmitTime = now;
+        handleSubmit();
+      }
+    });
     
     mathAnswerInput.addEventListener('blur', () => {
       if (isDialogOpen) {
@@ -4977,6 +6379,9 @@
       
       // Initial minimap
       updateMinimap();
+      
+      // Initialize rewards display (all items start as unearned)
+      updateRewardsDisplay();
       
       // Start animation loop
       animate();
