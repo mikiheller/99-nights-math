@@ -691,6 +691,66 @@
       animation: fadeOut 1s ease-out;
     }
     
+    .fire-warning {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 48px;
+      font-weight: bold;
+      color: #ff7b00;
+      text-shadow: 
+        0 0 10px rgba(255, 123, 0, 0.8),
+        0 0 20px rgba(255, 123, 0, 0.6),
+        0 0 30px rgba(255, 123, 0, 0.4);
+      z-index: 999;
+      pointer-events: none;
+      animation: fadeOut 1s ease-out;
+    }
+    
+    .game-over-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 99999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 30px;
+    }
+    
+    .game-over-overlay.active {
+      display: flex;
+    }
+    
+    .game-over-text {
+      font-size: 96px;
+      font-weight: bold;
+      color: #ff0000;
+      text-shadow: 
+        0 0 20px rgba(255, 0, 0, 0.8),
+        0 0 40px rgba(255, 0, 0, 0.6),
+        0 0 60px rgba(255, 0, 0, 0.4),
+        0 0 80px rgba(255, 0, 0, 0.2);
+      animation: gameOverPulse 2s ease-in-out infinite;
+    }
+    
+    .game-over-diamonds {
+      font-size: 32px;
+      color: #64d8ff;
+      text-shadow: 
+        0 0 10px rgba(100, 216, 255, 0.6);
+    }
+    
+    @keyframes gameOverPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.02); }
+    }
+    
     .pause-overlay {
       display: none;
       position: fixed;
@@ -1220,6 +1280,12 @@
     <div class="play-button" id="playButton" title="Resume Game">▶️</div>
   </div>
 
+  <!-- Game Over Overlay -->
+  <div class="game-over-overlay" id="gameOverOverlay">
+    <div class="game-over-text">YOU DIED</div>
+    <div class="game-over-diamonds" id="gameOverDiamonds">You earned 0 diamonds</div>
+  </div>
+
   <!-- Crafting Menu -->
   <div class="crafting-menu" id="craftingMenu">
     <div class="crafting-menu-header">
@@ -1694,6 +1760,246 @@
       
       group.position.set(x, 0, z);
       group.userData = { type: 'chest', action: 'openChest', tier: tier, worldX: x, worldZ: z };
+      return group;
+    }
+    
+    function createDeerMonster(x, z) {
+      const group = new THREE.Group();
+      
+      // Colors based on the reference image
+      const bodyMaterial = new THREE.MeshLambertMaterial({ color: 0x4a3728 }); // Dark brown body
+      const skinMaterial = new THREE.MeshLambertMaterial({ color: 0x8b7355 }); // Lighter face
+      const antlerMaterial = new THREE.MeshLambertMaterial({ color: 0x1a1a1a }); // Black antlers
+      const eyeMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 }); // Black
+      const eyeWhiteMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff }); // White eye rings
+      const earMaterial = new THREE.MeshLambertMaterial({ color: 0xc4a4a4 }); // Pink inner ears
+      
+      // Body (humanoid torso, leaning forward)
+      const bodyGeometry = new THREE.BoxGeometry(1.2, 1.6, 0.8);
+      const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+      body.position.set(0, 1.4, 0);
+      body.rotation.x = 0.2; // Slight lean forward
+      body.castShadow = true;
+      body.receiveShadow = true;
+      group.add(body);
+      
+      // Legs (digitigrade style - bent backwards at knee)
+      const upperLegGeometry = new THREE.BoxGeometry(0.35, 0.9, 0.35);
+      const lowerLegGeometry = new THREE.BoxGeometry(0.25, 0.8, 0.25);
+      const hoofGeometry = new THREE.BoxGeometry(0.3, 0.2, 0.4);
+      const hoofMaterial = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });
+      
+      // Left leg
+      const leftUpperLeg = new THREE.Mesh(upperLegGeometry, bodyMaterial);
+      leftUpperLeg.position.set(-0.3, 0.6, 0.2);
+      leftUpperLeg.rotation.x = -0.3;
+      group.add(leftUpperLeg);
+      
+      const leftLowerLeg = new THREE.Mesh(lowerLegGeometry, bodyMaterial);
+      leftLowerLeg.position.set(-0.3, 0.1, -0.1);
+      group.add(leftLowerLeg);
+      
+      const leftHoof = new THREE.Mesh(hoofGeometry, hoofMaterial);
+      leftHoof.position.set(-0.3, 0.1, 0.1);
+      group.add(leftHoof);
+      
+      // Right leg
+      const rightUpperLeg = new THREE.Mesh(upperLegGeometry, bodyMaterial);
+      rightUpperLeg.position.set(0.3, 0.6, 0.2);
+      rightUpperLeg.rotation.x = -0.3;
+      group.add(rightUpperLeg);
+      
+      const rightLowerLeg = new THREE.Mesh(lowerLegGeometry, bodyMaterial);
+      rightLowerLeg.position.set(0.3, 0.1, -0.1);
+      group.add(rightLowerLeg);
+      
+      const rightHoof = new THREE.Mesh(hoofGeometry, hoofMaterial);
+      rightHoof.position.set(0.3, 0.1, 0.1);
+      group.add(rightHoof);
+      
+      // Arms (long, creepy, with claws)
+      const upperArmGeometry = new THREE.BoxGeometry(0.25, 1.0, 0.25);
+      const lowerArmGeometry = new THREE.BoxGeometry(0.2, 0.9, 0.2);
+      const clawGeometry = new THREE.BoxGeometry(0.08, 0.4, 0.08);
+      
+      // Left arm
+      const leftUpperArm = new THREE.Mesh(upperArmGeometry, bodyMaterial);
+      leftUpperArm.position.set(-0.8, 1.6, 0);
+      leftUpperArm.rotation.z = 0.4;
+      group.add(leftUpperArm);
+      
+      const leftLowerArm = new THREE.Mesh(lowerArmGeometry, bodyMaterial);
+      leftLowerArm.position.set(-1.2, 1.0, 0);
+      leftLowerArm.rotation.z = 0.2;
+      group.add(leftLowerArm);
+      
+      // Left claws
+      for (let i = -1; i <= 1; i++) {
+        const claw = new THREE.Mesh(clawGeometry, antlerMaterial);
+        claw.position.set(-1.4, 0.4, i * 0.12);
+        claw.rotation.z = 0.3;
+        group.add(claw);
+      }
+      
+      // Right arm
+      const rightUpperArm = new THREE.Mesh(upperArmGeometry, bodyMaterial);
+      rightUpperArm.position.set(0.8, 1.6, 0);
+      rightUpperArm.rotation.z = -0.4;
+      group.add(rightUpperArm);
+      
+      const rightLowerArm = new THREE.Mesh(lowerArmGeometry, bodyMaterial);
+      rightLowerArm.position.set(1.2, 1.0, 0);
+      rightLowerArm.rotation.z = -0.2;
+      group.add(rightLowerArm);
+      
+      // Right claws
+      for (let i = -1; i <= 1; i++) {
+        const claw = new THREE.Mesh(clawGeometry, antlerMaterial);
+        claw.position.set(1.4, 0.4, i * 0.12);
+        claw.rotation.z = -0.3;
+        group.add(claw);
+      }
+      
+      // Neck
+      const neckGeometry = new THREE.BoxGeometry(0.5, 0.6, 0.5);
+      const neck = new THREE.Mesh(neckGeometry, bodyMaterial);
+      neck.position.set(0, 2.4, 0);
+      group.add(neck);
+      
+      // Head (deer skull mask)
+      const headGeometry = new THREE.BoxGeometry(0.9, 1.0, 0.8);
+      const head = new THREE.Mesh(headGeometry, skinMaterial);
+      head.position.set(0, 3.1, 0);
+      head.castShadow = true;
+      group.add(head);
+      
+      // Snout
+      const snoutGeometry = new THREE.BoxGeometry(0.5, 0.4, 0.6);
+      const snout = new THREE.Mesh(snoutGeometry, skinMaterial);
+      snout.position.set(0, 2.85, 0.5);
+      group.add(snout);
+      
+      // Nose
+      const noseGeometry = new THREE.BoxGeometry(0.25, 0.2, 0.15);
+      const nose = new THREE.Mesh(noseGeometry, antlerMaterial);
+      nose.position.set(0, 2.75, 0.85);
+      group.add(nose);
+      
+      // Eyes (large, creepy white rings with black centers)
+      const eyeRingGeometry = new THREE.BoxGeometry(0.35, 0.35, 0.1);
+      const eyeCenterGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.12);
+      
+      // Left eye
+      const leftEyeRing = new THREE.Mesh(eyeRingGeometry, eyeWhiteMaterial);
+      leftEyeRing.position.set(-0.25, 3.2, 0.4);
+      group.add(leftEyeRing);
+      
+      const leftEyeCenter = new THREE.Mesh(eyeCenterGeometry, eyeMaterial);
+      leftEyeCenter.position.set(-0.25, 3.2, 0.46);
+      group.add(leftEyeCenter);
+      
+      // Right eye
+      const rightEyeRing = new THREE.Mesh(eyeRingGeometry, eyeWhiteMaterial);
+      rightEyeRing.position.set(0.25, 3.2, 0.4);
+      group.add(rightEyeRing);
+      
+      const rightEyeCenter = new THREE.Mesh(eyeCenterGeometry, eyeMaterial);
+      rightEyeCenter.position.set(0.25, 3.2, 0.46);
+      group.add(rightEyeCenter);
+      
+      // Ears (pink inside)
+      const earGeometry = new THREE.BoxGeometry(0.15, 0.4, 0.3);
+      
+      const leftEar = new THREE.Mesh(earGeometry, bodyMaterial);
+      leftEar.position.set(-0.5, 3.5, 0);
+      leftEar.rotation.z = 0.3;
+      group.add(leftEar);
+      
+      const leftEarInner = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.3, 0.2), earMaterial);
+      leftEarInner.position.set(-0.52, 3.5, 0.08);
+      leftEarInner.rotation.z = 0.3;
+      group.add(leftEarInner);
+      
+      const rightEar = new THREE.Mesh(earGeometry, bodyMaterial);
+      rightEar.position.set(0.5, 3.5, 0);
+      rightEar.rotation.z = -0.3;
+      group.add(rightEar);
+      
+      const rightEarInner = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.3, 0.2), earMaterial);
+      rightEarInner.position.set(0.52, 3.5, 0.08);
+      rightEarInner.rotation.z = -0.3;
+      group.add(rightEarInner);
+      
+      // Antlers (large, branching, black)
+      const antlerBaseGeometry = new THREE.BoxGeometry(0.12, 1.2, 0.12);
+      const antlerBranchGeometry = new THREE.BoxGeometry(0.1, 0.6, 0.1);
+      const antlerTipGeometry = new THREE.BoxGeometry(0.08, 0.4, 0.08);
+      
+      // Left antler
+      const leftAntlerBase = new THREE.Mesh(antlerBaseGeometry, antlerMaterial);
+      leftAntlerBase.position.set(-0.35, 4.2, 0);
+      leftAntlerBase.rotation.z = 0.2;
+      group.add(leftAntlerBase);
+      
+      const leftBranch1 = new THREE.Mesh(antlerBranchGeometry, antlerMaterial);
+      leftBranch1.position.set(-0.55, 4.5, 0.15);
+      leftBranch1.rotation.z = 0.5;
+      leftBranch1.rotation.x = -0.3;
+      group.add(leftBranch1);
+      
+      const leftBranch2 = new THREE.Mesh(antlerBranchGeometry, antlerMaterial);
+      leftBranch2.position.set(-0.45, 4.8, -0.15);
+      leftBranch2.rotation.z = 0.3;
+      leftBranch2.rotation.x = 0.3;
+      group.add(leftBranch2);
+      
+      const leftTip1 = new THREE.Mesh(antlerTipGeometry, antlerMaterial);
+      leftTip1.position.set(-0.7, 4.9, 0.25);
+      leftTip1.rotation.z = 0.6;
+      group.add(leftTip1);
+      
+      const leftTip2 = new THREE.Mesh(antlerTipGeometry, antlerMaterial);
+      leftTip2.position.set(-0.5, 5.1, -0.2);
+      leftTip2.rotation.z = 0.2;
+      group.add(leftTip2);
+      
+      // Right antler (mirrored)
+      const rightAntlerBase = new THREE.Mesh(antlerBaseGeometry, antlerMaterial);
+      rightAntlerBase.position.set(0.35, 4.2, 0);
+      rightAntlerBase.rotation.z = -0.2;
+      group.add(rightAntlerBase);
+      
+      const rightBranch1 = new THREE.Mesh(antlerBranchGeometry, antlerMaterial);
+      rightBranch1.position.set(0.55, 4.5, 0.15);
+      rightBranch1.rotation.z = -0.5;
+      rightBranch1.rotation.x = -0.3;
+      group.add(rightBranch1);
+      
+      const rightBranch2 = new THREE.Mesh(antlerBranchGeometry, antlerMaterial);
+      rightBranch2.position.set(0.45, 4.8, -0.15);
+      rightBranch2.rotation.z = -0.3;
+      rightBranch2.rotation.x = 0.3;
+      group.add(rightBranch2);
+      
+      const rightTip1 = new THREE.Mesh(antlerTipGeometry, antlerMaterial);
+      rightTip1.position.set(0.7, 4.9, 0.25);
+      rightTip1.rotation.z = -0.6;
+      group.add(rightTip1);
+      
+      const rightTip2 = new THREE.Mesh(antlerTipGeometry, antlerMaterial);
+      rightTip2.position.set(0.5, 5.1, -0.2);
+      rightTip2.rotation.z = -0.2;
+      group.add(rightTip2);
+      
+      // Open mouth (creepy gaping)
+      const mouthGeometry = new THREE.BoxGeometry(0.35, 0.15, 0.3);
+      const mouthMaterial = new THREE.MeshLambertMaterial({ color: 0x2a1a1a });
+      const mouth = new THREE.Mesh(mouthGeometry, mouthMaterial);
+      mouth.position.set(0, 2.65, 0.55);
+      group.add(mouth);
+      
+      group.position.set(x, 0, z);
+      group.userData = { type: 'deerMonster' };
       return group;
     }
     
@@ -2716,6 +3022,10 @@
     
     let isStarving = false;
     let starvationTimer = null;
+    let hungryWarningShown = false; // One-time "you're hungry" at 10%
+    let starvingWarningShown = false; // One-time "you're starving" at 0%
+    let fireWarningShown = false; // One-time "your fire is low" at 10%
+    let isGameOver = false; // Track game over state
     
     let isNight = false;
     let currentDay = 1;
@@ -2727,6 +3037,12 @@
     let cultists = []; // Array to track active cultists
     let cultistsDefeated = 0;
     let cultistRewardGiven = false;
+    
+    // Deer monster state
+    let deerMonster = null; // The deer monster object
+    let deerSpawned = false; // Has deer spawned this night?
+    let lastDeerDamageTime = 0; // Prevent rapid damage
+    const DEER_DAMAGE_COOLDOWN = 1000; // 1 second between damage
     
     // Wall building configuration
     // Segment positions: 0=3oclock, 1=4:30, 2=6oclock(entrance), 3=7:30, 4=9oclock, 5=10:30, 6=12oclock, 7=1:30
@@ -3536,35 +3852,8 @@
           
           // Check if player died
           if (playerHealth <= 0) {
-            setTimeout(() => {
-              // If died fighting cultist, remove all cultists and reset counter
-              if (currentAction === 'fightCultist') {
-                cultists.forEach(cultist => {
-                  if (cultist.mesh) {
-                    scene.remove(cultist.mesh);
-                  }
-                });
-                cultists = [];
-                cultistsDefeated = 0;
-                cultistRewardGiven = false;
-                alert("You died to cultists! All inventory lost and -2 diamonds.");
-              } else {
-                alert("You died! All inventory lost and -2 diamonds.");
-              }
-              
-              woodCount.textContent = "0";
-              meatCount.textContent = "0";
-              coalCount.textContent = "0";
-              scrapCount.textContent = "0";
-              
-              // Lose 2 diamonds on death (can't go below 0)
-              diamondsEarned = Math.max(0, diamondsEarned - 2);
-              updateRewardsDisplay();
-              
-              playerHealth = 100;
-              updateHealthBar();
-              hideBubble();
-            }, 1000);
+            hideBubble();
+            showGameOver();
             return;
           }
           
@@ -3668,35 +3957,8 @@
           
           // Check if player died
           if (playerHealth <= 0) {
-            setTimeout(() => {
-              // If died fighting cultist, remove all cultists and reset counter
-              if (currentAction === 'fightCultist') {
-                cultists.forEach(cultist => {
-                  if (cultist.mesh) {
-                    scene.remove(cultist.mesh);
-                  }
-                });
-                cultists = [];
-                cultistsDefeated = 0;
-                cultistRewardGiven = false;
-                alert("You died to cultists! All inventory lost and -2 diamonds.");
-              } else {
-                alert("You died! All inventory lost and -2 diamonds.");
-              }
-              
-              woodCount.textContent = "0";
-              meatCount.textContent = "0";
-              coalCount.textContent = "0";
-              scrapCount.textContent = "0";
-              
-              // Lose 2 diamonds on death (can't go below 0)
-              diamondsEarned = Math.max(0, diamondsEarned - 2);
-              updateRewardsDisplay();
-              
-              playerHealth = 100;
-              updateHealthBar();
-              hideBubble();
-            }, 1000);
+            hideBubble();
+            showGameOver();
             return;
           }
         } else {
@@ -4267,12 +4529,18 @@
     }
     
     function damagePlayer(amount) {
-      playerHealth = Math.max(0, playerHealth - amount);
+      playerHealth = Math.max(0, Math.floor(playerHealth - amount));
       updateHealthBar();
+      
+      // Immediate death check after any damage
+      if (playerHealth <= 0 && !isGameOver) {
+        showGameOver();
+      }
     }
     
     function checkCampfireHealing() {
       if (isPaused) return; // Don't heal when paused
+      if (isDialogOpen) return; // Don't heal during encounters/dialogs
       
       const dx = playerX - 0;
       const dz = playerZ - 0;
@@ -4280,8 +4548,8 @@
       
       if (distance < 3) {
         isNearCampfire = true;
-        // Don't heal during cultist encounters
-        if (cultists.length === 0) {
+        // Don't heal during cultist encounters or when fire is out
+        if (cultists.length === 0 && fireStrength > 0) {
           playerHealth = Math.min(100, playerHealth + 0.25); // 50% slower (was 0.5)
           updateHealthBar();
         }
@@ -4298,6 +4566,17 @@
       const decayRate = FIRE_DECAY_RATES[currentFireLevel] || FIRE_DECAY_RATES[1];
       fireStrength = Math.max(0, fireStrength - decayRate);
       fireBar.style.width = `${fireStrength}%`;
+      
+      // Show one-time "your fire is low" warning at 10%
+      if (fireStrength <= 10 && fireStrength > 0 && !fireWarningShown) {
+        fireWarningShown = true;
+        showWarningMessage("Your fire is low!", 'fire-warning');
+      }
+      
+      // Reset warning when fire goes back above 10%
+      if (fireStrength > 10) {
+        fireWarningShown = false;
+      }
     }
     
     function checkFireLevelUp() {
@@ -4697,6 +4976,12 @@
         spawnCultists();
       }
       
+      // Spawn deer monster 5 seconds after night begins
+      if (isNight && cycleTimeRemaining === NIGHT_DURATION - 5 && !deerSpawned) {
+        deerSpawned = true;
+        spawnDeerMonster();
+      }
+      
       if (cycleTimeRemaining <= 0) {
         if (isNight) {
           // Night ended, new day
@@ -4720,6 +5005,10 @@
           cultistsSpawned = false;
           cultistsDefeated = 0;
           cultistRewardGiven = false;
+          
+          // Remove deer monster at dawn
+          removeDeerMonster();
+          deerSpawned = false;
           
           // Decrement farm plot harvest timer
           if (farmPlotsOwned > 0) {
@@ -4821,6 +5110,115 @@
       setTimeout(() => {
         notification.remove();
       }, 3000);
+    }
+    
+    // ============================================
+    // DEER MONSTER
+    // ============================================
+    
+    function spawnDeerMonster() {
+      // Spawn deer at edge of world, opposite to player
+      const angle = Math.atan2(playerZ, playerX) + Math.PI; // Opposite direction from player
+      const spawnRadius = worldRadius - 5;
+      const x = Math.cos(angle) * spawnRadius;
+      const z = Math.sin(angle) * spawnRadius;
+      
+      deerMonster = {
+        x: x,
+        z: z,
+        mesh: createDeerMonster(x, z)
+      };
+      
+      scene.add(deerMonster.mesh);
+    }
+    
+    function removeDeerMonster() {
+      if (deerMonster) {
+        scene.remove(deerMonster.mesh);
+        deerMonster = null;
+      }
+    }
+    
+    function updateDeerMonster() {
+      if (!deerMonster || isPaused || isDialogOpen || isGameOver) return;
+      
+      const deerSpeed = 0.12; // Slightly slower than player (0.15) so they can outrun
+      const deerFleeSpeed = 0.18; // Faster when fleeing from fire
+      const safeZoneRadius = CAMPFIRE_CIRCLE_RADIUS; // The dotted circle - deer can't cross if fire is lit
+      const damageDistance = 1.5; // How close deer needs to be to damage player
+      const waitDistance = safeZoneRadius + 2; // Where deer waits when fire is lit
+      
+      // Check if fire is burning
+      const fireIsBurning = fireStrength > 0;
+      
+      // Calculate deer's distance from campfire center
+      const deerDistFromCenter = Math.sqrt(deerMonster.x * deerMonster.x + deerMonster.z * deerMonster.z);
+      const deerIsInsideCircle = deerDistFromCenter < safeZoneRadius;
+      
+      if (fireIsBurning && deerIsInsideCircle) {
+        // Fire is lit and deer is inside - RUN AWAY!
+        // Move directly away from center (outward)
+        const dirX = deerMonster.x / deerDistFromCenter;
+        const dirZ = deerMonster.z / deerDistFromCenter;
+        deerMonster.x += dirX * deerFleeSpeed;
+        deerMonster.z += dirZ * deerFleeSpeed;
+        
+      } else if (fireIsBurning) {
+        // Fire is lit, deer is outside - move toward the edge of safe zone and wait
+        const dx = playerX - deerMonster.x;
+        const dz = playerZ - deerMonster.z;
+        const distToPlayer = Math.sqrt(dx * dx + dz * dz);
+        
+        // Calculate target position: edge of safe zone in direction of player
+        const angleToPlayer = Math.atan2(playerZ, playerX);
+        const targetX = Math.cos(angleToPlayer) * waitDistance;
+        const targetZ = Math.sin(angleToPlayer) * waitDistance;
+        
+        const dxTarget = targetX - deerMonster.x;
+        const dzTarget = targetZ - deerMonster.z;
+        const distToTarget = Math.sqrt(dxTarget * dxTarget + dzTarget * dzTarget);
+        
+        if (distToTarget > 0.5) {
+          // Move toward waiting position
+          const dirX = dxTarget / distToTarget;
+          const dirZ = dzTarget / distToTarget;
+          deerMonster.x += dirX * deerSpeed;
+          deerMonster.z += dirZ * deerSpeed;
+        }
+        // Deer waits menacingly at the edge of the safe zone
+        
+      } else {
+        // Fire is out - deer chases player freely!
+        const dx = playerX - deerMonster.x;
+        const dz = playerZ - deerMonster.z;
+        const distToPlayer = Math.sqrt(dx * dx + dz * dz);
+        
+        if (distToPlayer > damageDistance) {
+          // Chase player
+          const dirX = dx / distToPlayer;
+          const dirZ = dz / distToPlayer;
+          deerMonster.x += dirX * deerSpeed;
+          deerMonster.z += dirZ * deerSpeed;
+        }
+        
+        // Check for collision with player
+        if (distToPlayer < damageDistance) {
+          const now = Date.now();
+          if (now - lastDeerDamageTime >= DEER_DAMAGE_COOLDOWN) {
+            lastDeerDamageTime = now;
+            // Damage player
+            damagePlayer(20);
+            flashRedScreen();
+          }
+        }
+      }
+      
+      // Update mesh position
+      deerMonster.mesh.position.set(deerMonster.x, 0, deerMonster.z);
+      
+      // Make deer face toward player
+      const angleToPlayer = Math.atan2(playerX - deerMonster.x, playerZ - deerMonster.z);
+      deerMonster.mesh.rotation.y = angleToPlayer;
     }
     
     function updateCultists() {
@@ -5080,15 +5478,27 @@
         hungerBarContainer.classList.add('hunger-starving'); // Add glowing border
       } else {
         hungerBarContainer.classList.remove('hunger-starving'); // Remove glowing border
-        if (playerHunger < 25) {
+        if (playerHunger <= 10) {
+          hungerBar.classList.add('critical'); // Flashing red at 10% or below
+        } else if (playerHunger < 25) {
           hungerBar.classList.add('low'); // Red when below 25%
         }
       }
       
+      // Show one-time "you're hungry" warning at 10%
+      if (playerHunger <= 10 && playerHunger > 0 && !hungryWarningShown) {
+        hungryWarningShown = true;
+        showWarningMessage("You're Hungry!", 'hunger-warning');
+      }
+      
       // Check if player is starving
       if (playerHunger <= 0 && !isStarving) {
-        // Just became starving
+        // Just became starving - show one-time "you're starving" message
         isStarving = true;
+        if (!starvingWarningShown) {
+          starvingWarningShown = true;
+          showWarningMessage("You're Starving!", 'hunger-warning');
+        }
         startStarvation();
       } else if (playerHunger > 0 && isStarving) {
         // No longer starving
@@ -5098,6 +5508,14 @@
           clearInterval(starvationTimer);
           starvationTimer = null;
         }
+      }
+      
+      // Reset warnings when hunger goes back above thresholds
+      if (playerHunger > 10) {
+        hungryWarningShown = false;
+      }
+      if (playerHunger > 0) {
+        starvingWarningShown = false;
       }
     }
     
@@ -5123,44 +5541,57 @@
       
       // Check if player died
       if (playerHealth <= 0) {
-        if (starvationTimer) {
-          clearInterval(starvationTimer);
-          starvationTimer = null;
-        }
-        isStarving = false;
-        
-        // Clear inventory
-        setTimeout(() => {
-          alert("You starved to death! All inventory lost and -2 diamonds.");
-          woodCount.textContent = "0";
-          meatCount.textContent = "0";
-          coalCount.textContent = "0";
-          scrapCount.textContent = "0";
-          
-          // Lose 2 diamonds on death (can't go below 0)
-          diamondsEarned = Math.max(0, diamondsEarned - 2);
-          updateRewardsDisplay();
-          
-          playerHealth = 100;
-          updateHealthBar();
-          playerHunger = 100;
-          hungerBar.style.width = "100%";
-          hungerBarContainer.classList.remove('hunger-starving');
-        }, 500);
+        showGameOver();
       }
     }
     
     function showHungerWarning() {
+      // Legacy function - kept for compatibility
+      showWarningMessage("You're Hungry!", 'hunger-warning');
+    }
+    
+    function showWarningMessage(message, className) {
       // Create warning message
       const warning = document.createElement('div');
-      warning.className = 'hunger-warning';
-      warning.textContent = "You're Hungry!";
+      warning.className = className;
+      warning.textContent = message;
       document.body.appendChild(warning);
       
       // Remove after animation (1 second)
       setTimeout(() => {
         warning.remove();
       }, 1000);
+    }
+    
+    function showGameOver() {
+      if (isGameOver) return; // Prevent multiple triggers
+      isGameOver = true;
+      
+      // Stop all game loops and timers
+      if (starvationTimer) {
+        clearInterval(starvationTimer);
+        starvationTimer = null;
+      }
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+      
+      // Force hide math bubble
+      mathBubble.classList.remove('active');
+      isDialogOpen = false;
+      
+      // Update game over screen with diamonds earned (use total including milestones)
+      const gameOverDiamonds = document.getElementById('gameOverDiamonds');
+      const totalDiamonds = calculateTotalDiamonds();
+      gameOverDiamonds.textContent = `You earned ${totalDiamonds} diamond${totalDiamonds !== 1 ? 's' : ''}`;
+      
+      // Show game over overlay
+      const gameOverOverlay = document.getElementById('gameOverOverlay');
+      gameOverOverlay.classList.add('active');
+      
+      // Stop player movement and game updates
+      isPaused = true;
     }
     
     // ============================================
@@ -6067,7 +6498,7 @@
     });
     
     mathAnswerInput.addEventListener('blur', () => {
-      if (isDialogOpen) {
+      if (isDialogOpen && !isGameOver) {
         setTimeout(() => mathAnswerInput.focus(), 10);
       }
     });
@@ -6166,6 +6597,12 @@
     function updatePlayer() {
       if (isPaused) return; // Don't update if paused
       
+      // Global death check - catches any edge cases where health reaches 0
+      if (playerHealth <= 0 && !isGameOver) {
+        showGameOver();
+        return;
+      }
+      
       if (!isDialogOpen) {
         let moved = false;
         const oldX = playerX;
@@ -6222,6 +6659,7 @@
       
       checkCampfireHealing();
       updateCultists(); // Update cultist AI
+      updateDeerMonster(); // Update deer monster AI
       updateMinimap();
     }
     
