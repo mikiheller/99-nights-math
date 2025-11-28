@@ -3167,16 +3167,6 @@
           randomTree.isRare = true;
           randomTree.rareType = 'lanternbark';
           rewardsState.rareEntityMarkers.lanternbarkTree = randomTree;
-          
-          // TODO: Remove debug marker after testing
-          // Add a small red dot at the base of the tree
-          if (randomTree.mesh) {
-            const markerGeometry = new THREE.SphereGeometry(0.15, 8, 8);
-            const markerMaterial = new THREE.MeshBasicMaterial({ color: 0xcc0000 }); // Red
-            const marker = new THREE.Mesh(markerGeometry, markerMaterial);
-            marker.position.set(0, 0.15, 0.6); // At the base, close to trunk
-            randomTree.mesh.add(marker);
-          }
         }
       }
       
@@ -3292,7 +3282,7 @@
     }
     
     // Animate a diamond flying to the rewards section
-    function animateFlyingDiamond(onComplete) {
+    function animateFlyingDiamond(onComplete, message) {
       // Get the rewards category button position
       const rewardsBtn = document.getElementById('rewardsCategory');
       const rewardsRect = rewardsBtn.getBoundingClientRect();
@@ -3317,6 +3307,45 @@
         animation: flashFade 2s ease-out forwards;
       `;
       document.body.appendChild(flashOverlay);
+      
+      // Show message if provided
+      let messageEl = null;
+      if (message) {
+        messageEl = document.createElement('div');
+        messageEl.textContent = message;
+        messageEl.style.cssText = `
+          position: fixed;
+          top: 35%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          font-size: 42px;
+          font-weight: 700;
+          font-family: "Kalam", "Comic Sans MS", cursive;
+          color: white;
+          text-shadow: 0 0 20px rgba(100, 200, 255, 0.8), 0 0 40px rgba(100, 200, 255, 0.5);
+          z-index: 10002;
+          pointer-events: none;
+          text-align: center;
+          animation: messagePopIn 2s ease-out forwards;
+        `;
+        document.body.appendChild(messageEl);
+        
+        // Add message animation style if not exists
+        if (!document.getElementById('messagePopInStyle')) {
+          const style = document.createElement('style');
+          style.id = 'messagePopInStyle';
+          style.textContent = `
+            @keyframes messagePopIn {
+              0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+              20% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+              40% { transform: translate(-50%, -50%) scale(1); }
+              80% { opacity: 1; }
+              100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+            }
+          `;
+          document.head.appendChild(style);
+        }
+      }
       
       // Create explosion of diamonds all over the screen
       const diamondCount = 30;
@@ -3363,6 +3392,7 @@
       setTimeout(() => {
         flashOverlay.remove();
         explosionDiamonds.forEach(d => d.remove());
+        if (messageEl) messageEl.remove();
         
         // Create the main flying diamond
         const diamond = document.createElement('div');
@@ -3421,6 +3451,17 @@
         showCraftNotification(`🎉 You found the ${itemName}! +1💎`);
         updateRewardsDisplay();
       });
+    }
+    
+    // Award a diamond for surviving the night
+    function awardNightSurvivalDiamond() {
+      diamondsEarned++;
+      
+      // First show the diamond animation with "You survived another night!" message
+      animateFlyingDiamond(() => {
+        showCraftNotification(`🌅 You survived another night! +1💎`);
+        updateRewardsDisplay();
+      }, 'You survived another night!');
     }
     
     // Check and award milestones at the start of a new day
@@ -3918,6 +3959,11 @@
     }
     
     function handleSubmit() {
+      // Ignore empty submissions - don't treat as wrong
+      if (mathAnswerInput.value.trim() === '') {
+        return;
+      }
+      
       const userAnswer = parseInt(mathAnswerInput.value, 10);
       const correctAnswer = currentQuestions[currentQuestionIndex].answer;
       
@@ -5030,6 +5076,9 @@
       if (cycleTimeRemaining <= 0) {
         if (isNight) {
           // Night ended, new day
+          
+          // Award diamond for surviving the night with flashy animation
+          awardNightSurvivalDiamond();
           
           // Day advances by 1 + number of beds owned
           const daysToAdd = 1 + bedsOwned;
