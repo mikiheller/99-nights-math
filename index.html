@@ -1146,29 +1146,29 @@
               <div class="inv-dropdown-section">Rare Items</div>
               <div class="inv-dropdown-item reward-item" id="lanternbarkReward" data-reward="lanternbark">
                 <div class="inv-dropdown-left">
-                  <span class="inv-dropdown-icon">🌳</span>
-                  <span class="inv-dropdown-name">Lanternbark Tree</span>
+                  <span class="inv-dropdown-icon">✨🌳</span>
+                  <span class="inv-dropdown-name">Enchanted Tree</span>
                 </div>
                 <span class="inv-dropdown-count">+1💎</span>
               </div>
               <div class="inv-dropdown-item reward-item" id="silverWolfReward" data-reward="silverWolf">
                 <div class="inv-dropdown-left">
-                  <span class="inv-dropdown-icon">🐺</span>
-                  <span class="inv-dropdown-name">Silver-Gleam Wolf</span>
+                  <span class="inv-dropdown-icon">✨🐺</span>
+                  <span class="inv-dropdown-name">Enchanted Wolf</span>
                 </div>
                 <span class="inv-dropdown-count">+1💎</span>
               </div>
               <div class="inv-dropdown-item reward-item" id="whisperingFanReward" data-reward="whisperingFan">
                 <div class="inv-dropdown-left">
-                  <span class="inv-dropdown-icon">🌀</span>
-                  <span class="inv-dropdown-name">Whispering Fan Blade</span>
+                  <span class="inv-dropdown-icon">✨🔧</span>
+                  <span class="inv-dropdown-name">Enchanted Scrap</span>
                 </div>
                 <span class="inv-dropdown-count">+1💎</span>
               </div>
               <div class="inv-dropdown-item reward-item" id="frostCanisterReward" data-reward="frostCanister">
                 <div class="inv-dropdown-left">
-                  <span class="inv-dropdown-icon">🧊</span>
-                  <span class="inv-dropdown-name">Frost-Locked Canister</span>
+                  <span class="inv-dropdown-icon">✨⛽</span>
+                  <span class="inv-dropdown-name">Enchanted Fuel</span>
                 </div>
                 <span class="inv-dropdown-count">+1💎</span>
               </div>
@@ -1344,10 +1344,10 @@
     // VOXEL MODEL BUILDERS
     // ============================================
     
-    function createTree(x, z) {
+    function createTree(x, z, isEnchanted = false) {
       const group = new THREE.Group();
       
-      // Trunk (2 cubes)
+      // Trunk (2 cubes) - looks normal even if enchanted (surprise!)
       const trunkGeometry = new THREE.BoxGeometry(1, 1, 1);
       const trunkMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
       
@@ -1363,7 +1363,7 @@
       trunk2.receiveShadow = true;
       group.add(trunk2);
       
-      // Leaves (3x3x3 cube cluster)
+      // Leaves (3x3x3 cube cluster) - looks normal even if enchanted
       const leavesGeometry = new THREE.BoxGeometry(1, 1, 1);
       const leavesMaterial = new THREE.MeshLambertMaterial({ color: 0x228B22 });
       
@@ -1384,7 +1384,7 @@
       }
       
       group.position.set(x, 0, z);
-      group.userData = { type: 'tree', action: 'chop', worldX: x, worldZ: z };
+      group.userData = { type: 'tree', action: 'chop', worldX: x, worldZ: z, isEnchanted: isEnchanted };
       return group;
     }
     
@@ -1575,7 +1575,103 @@
       group.add(blade3);
       
       group.position.set(x, 0, z);
-      group.userData = { type: 'fan', action: 'salvageFan', worldX: x, worldZ: z };
+      group.userData = { type: 'fan', action: 'salvageFan', metalValue: 2, worldX: x, worldZ: z };
+      return group;
+    }
+    
+    function createBolt(x, z) {
+      const group = new THREE.Group();
+      
+      // Bolt head (hexagonal approximated with a cylinder-ish box)
+      const headGeometry = new THREE.CylinderGeometry(0.35, 0.35, 0.25, 6);
+      const boltMaterial = new THREE.MeshLambertMaterial({ color: 0x8B8682 }); // Gray metal
+      const head = new THREE.Mesh(headGeometry, boltMaterial);
+      head.position.y = 0.9;
+      head.castShadow = true;
+      head.receiveShadow = true;
+      group.add(head);
+      
+      // Bolt shaft
+      const shaftGeometry = new THREE.CylinderGeometry(0.15, 0.15, 0.8, 8);
+      const shaft = new THREE.Mesh(shaftGeometry, boltMaterial);
+      shaft.position.y = 0.4;
+      shaft.castShadow = true;
+      shaft.receiveShadow = true;
+      group.add(shaft);
+      
+      // Thread ridges (simple rings)
+      const threadMaterial = new THREE.MeshLambertMaterial({ color: 0x6B6662 });
+      for (let i = 0; i < 4; i++) {
+        const threadGeometry = new THREE.TorusGeometry(0.18, 0.03, 4, 8);
+        const thread = new THREE.Mesh(threadGeometry, threadMaterial);
+        thread.position.y = 0.15 + i * 0.15;
+        thread.rotation.x = Math.PI / 2;
+        thread.castShadow = true;
+        group.add(thread);
+      }
+      
+      group.position.set(x, 0, z);
+      group.userData = { type: 'bolt', action: 'salvageBolt', metalValue: 1, worldX: x, worldZ: z };
+      return group;
+    }
+    
+    function createOldRadio(x, z) {
+      const group = new THREE.Group();
+      
+      // Main body - dark/rusty box
+      const bodyGeometry = new THREE.BoxGeometry(1.4, 1.0, 0.8);
+      const bodyMaterial = new THREE.MeshLambertMaterial({ color: 0x2a2a2a }); // Dark gray/black
+      const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+      body.position.y = 0.5;
+      body.castShadow = true;
+      body.receiveShadow = true;
+      group.add(body);
+      
+      // Rusty/worn stripe across front
+      const stripeGeometry = new THREE.BoxGeometry(1.35, 0.5, 0.05);
+      const rustMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 }); // Rust brown
+      const stripe = new THREE.Mesh(stripeGeometry, rustMaterial);
+      stripe.position.set(0, 0.35, 0.41);
+      stripe.castShadow = true;
+      group.add(stripe);
+      
+      // Speaker grille lines
+      const grilleMaterial = new THREE.MeshLambertMaterial({ color: 0x5a5a5a });
+      for (let i = 0; i < 4; i++) {
+        const grilleGeometry = new THREE.BoxGeometry(0.8, 0.06, 0.05);
+        const grilleLine = new THREE.Mesh(grilleGeometry, grilleMaterial);
+        grilleLine.position.set(-0.2, 0.2 + i * 0.12, 0.42);
+        group.add(grilleLine);
+      }
+      
+      // Dial/knob on right side
+      const dialGeometry = new THREE.CylinderGeometry(0.15, 0.15, 0.1, 12);
+      const dialMaterial = new THREE.MeshLambertMaterial({ color: 0x808080 });
+      const dial = new THREE.Mesh(dialGeometry, dialMaterial);
+      dial.position.set(0.45, 0.6, 0.45);
+      dial.rotation.x = Math.PI / 2;
+      dial.castShadow = true;
+      group.add(dial);
+      
+      // Antenna (broken/bent)
+      const antennaMaterial = new THREE.MeshLambertMaterial({ color: 0x909090 });
+      const antenna1Geometry = new THREE.CylinderGeometry(0.03, 0.03, 0.6, 6);
+      const antenna1 = new THREE.Mesh(antenna1Geometry, antennaMaterial);
+      antenna1.position.set(0.5, 1.2, 0);
+      antenna1.rotation.z = 0.3; // Slightly tilted
+      antenna1.castShadow = true;
+      group.add(antenna1);
+      
+      // Broken antenna piece
+      const antenna2Geometry = new THREE.CylinderGeometry(0.025, 0.03, 0.3, 6);
+      const antenna2 = new THREE.Mesh(antenna2Geometry, antennaMaterial);
+      antenna2.position.set(0.6, 1.5, 0);
+      antenna2.rotation.z = 0.8; // More bent
+      antenna2.castShadow = true;
+      group.add(antenna2);
+      
+      group.position.set(x, 0, z);
+      group.userData = { type: 'radio', action: 'salvageRadio', metalValue: 3, worldX: x, worldZ: z };
       return group;
     }
     
@@ -3038,6 +3134,7 @@
     
     let isNight = false;
     let currentDay = 1;
+    let currentNight = 0; // Track which night we're on (increments when night starts)
     const DAY_DURATION = 180; // 3 minutes
     const NIGHT_DURATION = 90; // 1.5 minutes
     let cycleTimeRemaining = DAY_DURATION;
@@ -3046,7 +3143,7 @@
     let cultists = []; // Array to track active cultists
     let cultistsDefeated = 0;
     let cultistRewardGiven = false;
-    
+
     // Deer monster state
     let deerMonster = null; // The deer monster object
     let deerSpawned = false; // Has deer spawned this night?
@@ -3688,19 +3785,32 @@
       placeEntity('tree', 'chop', 6);
       placeEntity('wolf', 'fightWolf', 3);
       placeEntity('fuel', 'collectFuel', 1);
-      placeEntity('fan', 'salvageFan', 2);
+      // Scrap metal variety: bolt (1 metal), fan (2 metal), radio (3 metal)
+      placeEntity('bolt', 'salvageBolt', 1);
+      placeEntity('fan', 'salvageFan', 1);
+      placeEntity('radio', 'salvageRadio', 1);
+      
+      // Mark 1 in 10 trees as enchanted
+      const trees = entities.filter(e => e.type === 'tree');
+      trees.forEach(tree => {
+        tree.isEnchanted = Math.random() < 0.1; // 10% chance
+      });
       
       // Create 3D meshes for each entity
       entities.forEach(entity => {
         let mesh;
         if (entity.type === 'tree') {
-          mesh = createTree(entity.x, entity.z);
+          mesh = createTree(entity.x, entity.z, entity.isEnchanted);
         } else if (entity.type === 'wolf') {
           mesh = createWolf(entity.x, entity.z);
         } else if (entity.type === 'fuel') {
           mesh = createFuelCanister(entity.x, entity.z);
         } else if (entity.type === 'fan') {
           mesh = createBrokenFan(entity.x, entity.z);
+        } else if (entity.type === 'bolt') {
+          mesh = createBolt(entity.x, entity.z);
+        } else if (entity.type === 'radio') {
+          mesh = createOldRadio(entity.x, entity.z);
         }
         
         if (mesh) {
@@ -3806,6 +3916,7 @@
         mathQuestionCounter.style.display = 'block';
       } else if (actionKey === 'chop') {
         // Chainsaw: 1 question, Good Axe: 2 harder questions, otherwise 3 normal questions
+        // Note: enchanted trees look normal - surprise diamond at the end!
         if (rewardsState.weapons.hasChainsaw) {
           currentQuestions = [generateChainsawQuestion()];
           mathBubbleLabel.textContent = "⛓️ Chainsaw Tree";
@@ -3827,7 +3938,17 @@
         mathQuestionCounter.style.display = 'none';
       } else if (actionKey === 'salvageFan') {
         currentQuestions = [generateCoalOrMetalQuestion()];
-        mathBubbleLabel.textContent = "Salvage Fan";
+        mathBubbleLabel.textContent = "Salvage Fan (+2 metal)";
+        mathTimerBar.style.display = 'none';
+        mathQuestionCounter.style.display = 'none';
+      } else if (actionKey === 'salvageBolt') {
+        currentQuestions = [generateCoalOrMetalQuestion()];
+        mathBubbleLabel.textContent = "Salvage Bolt (+1 metal)";
+        mathTimerBar.style.display = 'none';
+        mathQuestionCounter.style.display = 'none';
+      } else if (actionKey === 'salvageRadio') {
+        currentQuestions = [generateCoalOrMetalQuestion()];
+        mathBubbleLabel.textContent = "Salvage Radio (+3 metal)";
         mathTimerBar.style.display = 'none';
         mathQuestionCounter.style.display = 'none';
       } else if (actionKey === 'collectKey') {
@@ -3997,7 +4118,7 @@
             mathBubbleFeedback.textContent = "✓ Correct, but too late. No wood.";
           } else if (currentAction === 'collectFuel') {
             mathBubbleFeedback.textContent = "✓ Correct, but too late. No fuel.";
-          } else if (currentAction === 'salvageFan') {
+          } else if (currentAction === 'salvageFan' || currentAction === 'salvageBolt' || currentAction === 'salvageRadio') {
             mathBubbleFeedback.textContent = "✓ Correct, but too late. No metal.";
           }
         }
@@ -4061,6 +4182,7 @@
         // Tree: get wood based on weapon
         let woodEarned = 0;
         let feedbackText = "";
+        const isEnchanted = currentInteractable && currentInteractable.isEnchanted;
         
         if (rewardsState.weapons.hasChainsaw) {
           // Chainsaw: 1 question = 4 wood if correct on first try
@@ -4104,17 +4226,28 @@
         }
         mathBubbleFeedback.textContent = feedbackText;
         
+        // Enchanted trees give a surprise diamond!
+        if (isEnchanted && woodEarned > 0) {
+          setTimeout(() => {
+            diamondsEarned++;
+            animateFlyingDiamond(() => {
+              showCraftNotification('✨ Enchanted Tree! +1💎');
+              updateRewardsDisplay();
+            });
+          }, 500);
+        }
+        
         // Legacy code path removed - handled above
         if (false) {
           mathBubbleFeedback.textContent = "No wood - you needed to answer correctly on first try!";
         }
         
-        // Check for rare Lanternbark Tree
+        // Check for rare Enchanted Tree
         if (currentInteractable && currentInteractable.isRare && currentInteractable.rareType === 'lanternbark') {
           rewardsState.rareItems.lanternbark = true;
           rewardsState.rareEntityMarkers.lanternbarkTree = null;
           setTimeout(() => {
-            awardRareItemDiamond('Lanternbark Tree');
+            awardRareItemDiamond('Enchanted Tree');
           }, 100);
         }
         
@@ -4136,13 +4269,17 @@
         
         cultistsDefeated++;
         mathBubbleFeedback.textContent = `✓ Cultist defeated! (${cultistsDefeated}/3)`;
-        
+
         // Check if all 3 cultists defeated (and reward not yet given)
         if (cultistsDefeated === 3 && !cultistRewardGiven) {
           cultistRewardGiven = true;
           setTimeout(() => {
             scrapCount.textContent = parseInt(scrapCount.textContent, 10) + 3;
             showCultistVictoryNotification();
+            // End the night early when all cultists are defeated
+            setTimeout(() => {
+              endNightEarly();
+            }, 2000);
           }, 1000);
         }
       } else if (actionKey === 'fightWolf') {
@@ -4164,12 +4301,12 @@
           mathBubbleFeedback.textContent = "No meat - too slow or wrong answers!";
         }
         
-        // Check for rare Silver-Gleam Wolf
+        // Check for rare Enchanted Wolf
         if (currentInteractable && currentInteractable.isRare && currentInteractable.rareType === 'silverWolf') {
           rewardsState.rareItems.silverWolf = true;
           rewardsState.rareEntityMarkers.silverGleamWolf = null;
           setTimeout(() => {
-            awardRareItemDiamond('Silver-Gleam Wolf');
+            awardRareItemDiamond('Enchanted Wolf');
           }, 100);
         }
         
@@ -4189,12 +4326,12 @@
           mathBubbleFeedback.textContent = "No fuel - you needed to answer correctly on first try!";
         }
         
-        // Check for rare Frost-Locked Canister
+        // Check for rare Enchanted Fuel
         if (currentInteractable && currentInteractable.isRare && currentInteractable.rareType === 'frostCanister') {
           rewardsState.rareItems.frostCanister = true;
           rewardsState.rareEntityMarkers.frostLockedCanister = null;
           setTimeout(() => {
-            awardRareItemDiamond('Frost-Locked Canister');
+            awardRareItemDiamond('Enchanted Fuel');
           }, 100);
         }
         
@@ -4204,7 +4341,32 @@
           if (index > -1) entities.splice(index, 1);
         }
       } else if (actionKey === 'salvageFan') {
-        // Fan: only get reward if correct on first try
+        // Fan: only get reward if correct on first try - worth 2 metal
+        const gotReward = questionsCorrectFirstTry[0] === true;
+        
+        if (gotReward) {
+          scrapCount.textContent = parseInt(scrapCount.textContent, 10) + 2;
+          mathBubbleFeedback.textContent = "✓ Salvaged! +2 metal";
+        } else {
+          mathBubbleFeedback.textContent = "No metal - you needed to answer correctly on first try!";
+        }
+        
+        // Check for rare Enchanted Scrap
+        if (currentInteractable && currentInteractable.isRare && currentInteractable.rareType === 'whisperingFan') {
+          rewardsState.rareItems.whisperingFan = true;
+          rewardsState.rareEntityMarkers.whisperingFanBlade = null;
+          setTimeout(() => {
+            awardRareItemDiamond('Enchanted Scrap');
+          }, 100);
+        }
+        
+        if (currentInteractable && currentInteractable.mesh) {
+          scene.remove(currentInteractable.mesh);
+          const index = entities.indexOf(currentInteractable);
+          if (index > -1) entities.splice(index, 1);
+        }
+      } else if (actionKey === 'salvageBolt') {
+        // Bolt: only get reward if correct on first try - worth 1 metal
         const gotReward = questionsCorrectFirstTry[0] === true;
         
         if (gotReward) {
@@ -4214,13 +4376,20 @@
           mathBubbleFeedback.textContent = "No metal - you needed to answer correctly on first try!";
         }
         
-        // Check for rare Whispering Fan Blade
-        if (currentInteractable && currentInteractable.isRare && currentInteractable.rareType === 'whisperingFan') {
-          rewardsState.rareItems.whisperingFan = true;
-          rewardsState.rareEntityMarkers.whisperingFanBlade = null;
-          setTimeout(() => {
-            awardRareItemDiamond('Whispering Fan Blade');
-          }, 100);
+        if (currentInteractable && currentInteractable.mesh) {
+          scene.remove(currentInteractable.mesh);
+          const index = entities.indexOf(currentInteractable);
+          if (index > -1) entities.splice(index, 1);
+        }
+      } else if (actionKey === 'salvageRadio') {
+        // Radio: only get reward if correct on first try - worth 3 metal
+        const gotReward = questionsCorrectFirstTry[0] === true;
+        
+        if (gotReward) {
+          scrapCount.textContent = parseInt(scrapCount.textContent, 10) + 3;
+          mathBubbleFeedback.textContent = "✓ Salvaged! +3 metal";
+        } else {
+          mathBubbleFeedback.textContent = "No metal - you needed to answer correctly on first try!";
         }
         
         if (currentInteractable && currentInteractable.mesh) {
@@ -4908,8 +5077,9 @@
         // Make sure it's within world bounds
         const maxCoord = worldSize / 2 - 2;
         if (Math.abs(x) < maxCoord && Math.abs(z) < maxCoord && !isTooClose(x, z)) {
-          const entity = { type: 'tree', action: 'chop', x, z };
-          const mesh = createTree(x, z);
+          const isEnchanted = Math.random() < 0.1; // 10% chance to be enchanted
+          const entity = { type: 'tree', action: 'chop', x, z, isEnchanted };
+          const mesh = createTree(x, z, isEnchanted);
           entity.mesh = mesh;
           entities.push(entity);
           scene.add(mesh);
@@ -4958,17 +5128,27 @@
           const z = (Math.random() - 0.5) * worldSize * 0.9;
           if (!isTooClose(x, z)) {
             const entity = { type, action, x, z };
+            
+            // 10% of trees are enchanted
+            if (type === 'tree') {
+              entity.isEnchanted = Math.random() < 0.1;
+            }
+            
             entities.push(entity);
             
             let mesh;
             if (type === 'tree') {
-              mesh = createTree(x, z);
+              mesh = createTree(x, z, entity.isEnchanted);
             } else if (type === 'wolf') {
               mesh = createWolf(x, z);
             } else if (type === 'fuel') {
               mesh = createFuelCanister(x, z);
             } else if (type === 'fan') {
               mesh = createBrokenFan(x, z);
+            } else if (type === 'bolt') {
+              mesh = createBolt(x, z);
+            } else if (type === 'radio') {
+              mesh = createOldRadio(x, z);
             }
             
             if (mesh) {
@@ -4987,7 +5167,10 @@
       const baseTreeCount = 6;
       const baseWolfCount = 3;
       const baseFuelCount = 1;
-      const baseFanCount = 2;
+      // Scrap metal variety: bolt (1 metal), fan (2 metal), radio (3 metal)
+      const baseBoltCount = 1;
+      const baseFanCount = 1;
+      const baseRadioCount = 1;
       
       // Scale based on current fire level
       const scaleFactor = currentFireLevel;
@@ -4995,7 +5178,9 @@
       placeNewEntities('tree', 'chop', baseTreeCount * scaleFactor);
       placeNewEntities('wolf', 'fightWolf', baseWolfCount * scaleFactor);
       placeNewEntities('fuel', 'collectFuel', baseFuelCount * scaleFactor);
+      placeNewEntities('bolt', 'salvageBolt', baseBoltCount * scaleFactor);
       placeNewEntities('fan', 'salvageFan', baseFanCount * scaleFactor);
+      placeNewEntities('radio', 'salvageRadio', baseRadioCount * scaleFactor);
       
       // Check for rare items in newly spawned entities
       markRareEntities();
@@ -5067,8 +5252,8 @@
         spawnCultists();
       }
       
-      // Spawn deer monster 5 seconds after night begins
-      if (isNight && cycleTimeRemaining === NIGHT_DURATION - 5 && !deerSpawned) {
+      // Spawn deer monster 5 seconds after night begins (only every 3rd night)
+      if (isNight && cycleTimeRemaining === NIGHT_DURATION - 5 && !deerSpawned && currentNight % 3 === 0) {
         deerSpawned = true;
         spawnDeerMonster();
       }
@@ -5107,6 +5292,7 @@
           }
         } else {
           // Day ended, night begins
+          currentNight++; // Track which night this is
           cycleTimeRemaining = NIGHT_DURATION;
           setNightMode(true);
         }
@@ -5199,13 +5385,49 @@
       `;
       notification.textContent = '🎉 All cultists defeated! +3 metal 🎉';
       document.body.appendChild(notification);
-      
+
       // Remove after 3 seconds
       setTimeout(() => {
         notification.remove();
       }, 3000);
     }
     
+    function endNightEarly() {
+      if (!isNight) return; // Only end if it's actually night
+      
+      // Award diamond for surviving the night with flashy animation
+      awardNightSurvivalDiamond();
+      
+      // Day advances by 1 + number of beds owned
+      const daysToAdd = 1 + bedsOwned;
+      currentDay += daysToAdd;
+      dayCounter.textContent = currentDay;
+      
+      // Check for milestone rewards at the start of the new day
+      checkMilestones(currentDay);
+      updateRewardsDisplay();
+      
+      cycleTimeRemaining = DAY_DURATION;
+      setNightMode(false);
+      nightWarningShown = false;
+      cultistsSpawned = false;
+      cultistsDefeated = 0;
+      cultistRewardGiven = false;
+      
+      // Remove deer monster at dawn
+      removeDeerMonster();
+      deerSpawned = false;
+      
+      // Decrement farm plot harvest timer
+      if (farmPlotsOwned > 0) {
+        farmPlotDaysUntilHarvest -= daysToAdd;
+        updateFarmPlotVisuals(); // Show carrots if ready
+      }
+      
+      // Show notification that night ended early
+      showCraftNotification('☀️ Dawn breaks early! The cultists have been vanquished!');
+    }
+
     // ============================================
     // DEER MONSTER
     // ============================================
