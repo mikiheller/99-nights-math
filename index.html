@@ -128,6 +128,32 @@
       transform: scale(1.1);
     }
 
+    .camera-toggle {
+      flex: 0 0 auto;
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--bg-panel-soft) 0%, var(--bg-panel) 100%);
+      border: 1px solid var(--border-soft);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 18px;
+    }
+    
+    .camera-toggle:hover {
+      background: rgba(255, 123, 0, 0.1);
+      border-color: var(--accent-fire);
+      transform: scale(1.1);
+    }
+    
+    .camera-toggle.first-person {
+      background: rgba(255, 123, 0, 0.2);
+      border-color: var(--accent-fire);
+    }
+
     .day-section {
       flex: 1;
       display: flex;
@@ -1014,6 +1040,7 @@
           <div class="cycle-countdown" id="cycleCountdown">3:00</div>
         </div>
         <div class="pause-button" id="pauseButton" title="Pause Game">⏸️</div>
+        <div class="camera-toggle" id="cameraToggle" title="Toggle First/Third Person View">👁️</div>
       </div>
 
       <!-- Inventory -->
@@ -3073,7 +3100,8 @@
     const pauseButton = document.getElementById('pauseButton');
     const pauseOverlay = document.getElementById('pauseOverlay');
     const playButton = document.getElementById('playButton');
-    
+    const cameraToggleBtn = document.getElementById('cameraToggle');
+
     // Crafting menu elements
     const craftingMenu = document.getElementById('craftingMenu');
     const craftingItems = document.getElementById('craftingItems');
@@ -3604,6 +3632,10 @@
     const playerSpeed = 0.15;
     const keys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false, w: false, a: false, s: false, d: false, e: false, E: false };
     const interactionDistance = 1.5;
+    
+    // Camera state
+    let cameraMode = 'third-person'; // 'third-person' or 'first-person'
+    let playerFacingAngle = 0; // Angle in radians, 0 = looking toward negative Z (up on screen)
     
     const BASE_CAMPFIRE_CIRCLE_RADIUS = 7.5; // Base dotted circle radius around campfire
     // Safe zone radius grows with fire level: L1=7.5, L2=10, L3=13 (includes farm plot), L4=16
@@ -6898,11 +6930,26 @@
     pauseButton.addEventListener('click', () => {
       isPaused = true;
       pauseOverlay.classList.add('active');
-      
+
       // Pause wolf timer if active
       if (timerInterval) {
         clearInterval(timerInterval);
         timerInterval = null;
+      }
+    });
+    
+    // Camera toggle button
+    cameraToggleBtn.addEventListener('click', () => {
+      if (cameraMode === 'third-person') {
+        cameraMode = 'first-person';
+        cameraToggleBtn.classList.add('first-person');
+        cameraToggleBtn.innerHTML = '👤'; // First-person icon
+        cameraToggleBtn.title = 'Switch to Third Person View';
+      } else {
+        cameraMode = 'third-person';
+        cameraToggleBtn.classList.remove('first-person');
+        cameraToggleBtn.innerHTML = '👁️'; // Third-person icon
+        cameraToggleBtn.title = 'Switch to First Person View';
       }
     });
     
@@ -6960,22 +7007,33 @@
         let moved = false;
         const oldX = playerX;
         const oldZ = playerZ;
+        let moveX = 0;
+        let moveZ = 0;
         
         if (keys.w || keys.ArrowUp) {
           playerZ -= playerSpeed;
+          moveZ -= 1;
           moved = true;
         }
         if (keys.s || keys.ArrowDown) {
           playerZ += playerSpeed;
+          moveZ += 1;
           moved = true;
         }
         if (keys.a || keys.ArrowLeft) {
           playerX -= playerSpeed;
+          moveX -= 1;
           moved = true;
         }
         if (keys.d || keys.ArrowRight) {
           playerX += playerSpeed;
+          moveX += 1;
           moved = true;
+        }
+        
+        // Update player facing direction based on movement
+        if (moved && (moveX !== 0 || moveZ !== 0)) {
+          playerFacingAngle = Math.atan2(moveX, -moveZ);
         }
         
         // Check wall collision - revert if blocked
@@ -6998,17 +7056,37 @@
         }
       }
 
-      // Update player mesh position
+      // Update player mesh position and rotation
       if (playerMesh) {
         playerMesh.position.x = playerX;
         playerMesh.position.z = playerZ;
+        playerMesh.rotation.y = playerFacingAngle; // Rotate player to face movement direction
+        
+        // Hide player mesh in first-person view
+        playerMesh.visible = (cameraMode === 'third-person');
       }
       
       // Update camera to follow player
-      camera.position.x = playerX;
-      camera.position.z = playerZ + 30;
-      camera.position.y = 30;
-      camera.lookAt(playerX, 0, playerZ);
+      if (cameraMode === 'third-person') {
+        // Third person: camera above and behind player, looking down
+        camera.position.x = playerX;
+        camera.position.z = playerZ + 30;
+        camera.position.y = 30;
+        camera.lookAt(playerX, 0, playerZ);
+      } else {
+        // First person: camera at player eye level, looking in facing direction
+        const eyeHeight = 1.8; // Eye level height
+        const lookDistance = 10; // How far to look ahead
+        
+        camera.position.x = playerX;
+        camera.position.y = eyeHeight;
+        camera.position.z = playerZ;
+        
+        // Calculate look-at point based on facing direction
+        const lookX = playerX + Math.sin(playerFacingAngle) * lookDistance;
+        const lookZ = playerZ - Math.cos(playerFacingAngle) * lookDistance;
+        camera.lookAt(lookX, eyeHeight * 0.8, lookZ);
+      }
       
       checkCampfireHealing();
       updateCultists(); // Update cultist AI
